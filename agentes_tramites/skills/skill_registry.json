@@ -1,0 +1,58 @@
+{
+  "licencia_conducir": {
+    "nombre": "Licencia de conducir",
+    "descripcion": "Consultas guiadas sobre sacar por primera vez, renovar, duplicar u homologar una licencia de conducir.",
+    "ejemplos_usuario": [
+      "quiero sacar la libreta",
+      "se me venció la licencia",
+      "quiero renovar la libreta",
+      "perdí mi licencia de conducir"
+    ],
+    "datos_que_puede_extraer": [
+      "tramite",
+      "categoria",
+      "edad",
+      "grupo_categoria",
+      "patologias",
+      "licencia_vigente"
+    ],
+    "cuando_usar": [
+      "Cuando el usuario pregunte por libreta, licencia, conducir, renovación, duplicado o primera vez."
+    ],
+    "palabras_clave": [
+      "licencia",
+      "libreta",
+      "conducir",
+      "renovar",
+      "renovación",
+      "duplicado",
+      "homologar"
+    ],
+    "handler": "skills.licencia_conducir.handler:handle"
+  },
+  "permiso_construccion": {
+    "nombre": "Permiso de construcción",
+    "descripcion": "Consultas iniciales sobre permisos para construir, ampliar, reformar o regularizar una obra.",
+    "ejemplos_usuario": [
+      "quiero construir una casa",
+      "necesito permiso para una obra",
+      "voy a ampliar mi vivienda",
+      "quiero regularizar una construcción"
+    ],
+    "datos_que_puede_extraer": [],
+    "cuando_usar": [
+      "Cuando el usuario consulte por permisos de construcción, obras, reformas, ampliaciones o regularizaciones."
+    ],
+    "palabras_clave": [
+      "construcción",
+      "construir",
+      "obra",
+      "reforma",
+      "reformar",
+      "ampliación",
+      "ampliar",
+      "regularizar"
+    ],
+    "handler": "skills.permiso_construccion.handler:handle"
+  }
+}

@@ -1,0 +1,9 @@
+metadata:
+  title: "Permiso de construcción"
+  status: "placeholder"
+  source_name: "Fuente oficial pendiente de definir"
+  disclaimer: "Respuesta de prueba. Los requisitos reales todavía no fueron cargados."
+
+answer:
+  message: "Identifiqué una consulta sobre permiso de construcción."
+  next_step: "En una siguiente versión esta skill preguntaría ubicación, tipo de obra y alcance del proyecto."

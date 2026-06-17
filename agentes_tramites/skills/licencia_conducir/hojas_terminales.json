@@ -1,0 +1,230 @@
+[
+  {
+    "id": "licencia_primera_vez_a_hasta_74",
+    "titulo": "Licencia de conducir por primera vez categoría A hasta 74 años",
+    "condiciones": {
+      "tramite": "primera_vez",
+      "grupo_categoria": "amateur",
+      "categorias": [
+        "A"
+      ],
+      "edad_min": 18,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "licencia_primera_vez_a_hasta_74.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué vehículo quiere conducir?",
+      "¿Es su primera licencia?",
+      "¿Qué edad tiene?",
+      "¿Tiene alguna patología médica restrictiva?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "14",
+        "seccion": "LICENCIA DE CONDUCIR POR PRIMERA VEZ HASTA 74 AÑOS CATEGORÍA A"
+      }
+    ]
+  },
+  {
+    "id": "licencia_primera_vez_g1_g2_hasta_74",
+    "titulo": "Licencia de conducir por primera vez categorías G1 o G2 hasta 74 años",
+    "condiciones": {
+      "tramite": "primera_vez",
+      "grupo_categoria": "amateur",
+      "categorias": [
+        "G1",
+        "G2"
+      ],
+      "edad_min": 16,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "licencia_primera_vez_g1_g2_hasta_74.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué tipo de moto quiere conducir?",
+      "¿Es su primera licencia?",
+      "¿Qué edad tiene?",
+      "¿Tiene alguna patología médica restrictiva?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "18",
+        "seccion": "LICENCIA DE CONDUCIR POR PRIMERA VEZ CATEGORÍA G1 Y G2 (MOTOS) HASTA 74 AÑOS INCLUSIVE"
+      }
+    ]
+  },
+  {
+    "id": "licencia_profesional_primera_vez",
+    "titulo": "Licencia de conducir profesional por primera vez (B, C, D, E, F, H, G3)",
+    "condiciones": {
+      "tramite": "primera_vez",
+      "grupo_categoria": "profesional",
+      "categorias": [
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "H",
+        "G3"
+      ],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "licencia_profesional_primera_vez.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿A qué categoría profesional aspira?",
+      "¿Qué edad tiene?",
+      "¿Tiene antigüedad en otras categorías?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "16",
+        "seccion": "LICENCIA DE CONDUCIR PROFESIONAL POR PRIMERA VEZ"
+      }
+    ]
+  },
+  {
+    "id": "renovacion_a_g1_g2_hasta_74_sin_patologias",
+    "titulo": "Renovación de licencia A, G1 o G2 hasta 74 años sin patologías",
+    "condiciones": {
+      "tramite": "renovacion",
+      "grupo_categoria": "amateur",
+      "categorias": [
+        "A",
+        "G1",
+        "G2"
+      ],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "renovacion_a_g1_g2_hasta_74_sin_patologias.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué categoría de licencia tiene?",
+      "¿Qué edad tiene?",
+      "¿Tiene patologías o restricciones médicas registradas?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "25",
+        "seccion": "RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS A, G1 Y G2 HASTA 74 AÑOS INCLUSIVE SIN PATOLOGÍAS RESTRICTIVAS"
+      }
+    ]
+  },
+  {
+    "id": "renovacion_a_g1_g2_hasta_74_con_patologias",
+    "titulo": "Renovación de licencia A, G1 o G2 hasta 74 años con patologías",
+    "condiciones": {
+      "tramite": "renovacion",
+      "grupo_categoria": "amateur",
+      "categorias": [
+        "A",
+        "G1",
+        "G2"
+      ],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": true
+    },
+    "archivo_md": "renovacion_a_g1_g2_hasta_74_con_patologias.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué categoría de licencia tiene?",
+      "¿Qué edad tiene?",
+      "¿Tiene patologías como diabetes, problemas visuales o auditivos?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "26",
+        "seccion": "RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS A, G1 Y G2 HASTA 74 AÑOS INCLUSIVE CON PATOLOGÍAS RESTRICTIVAS"
+      }
+    ]
+  },
+  {
+    "id": "renovacion_profesional",
+    "titulo": "Renovación de licencia profesional (B, C, D, E, F, H, G3)",
+    "condiciones": {
+      "tramite": "renovacion",
+      "grupo_categoria": "profesional",
+      "categorias": [
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "H",
+        "G3"
+      ],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": null
+    },
+    "archivo_md": "renovacion_profesional.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué categoría profesional tiene?",
+      "¿Qué edad tiene?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "28",
+        "seccion": "RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS PROFESIONALES"
+      }
+    ]
+  },
+  {
+    "id": "duplicado_licencia",
+    "titulo": "Duplicado de licencia de conducir por hurto o extravío",
+    "condiciones": {
+      "tramite": "duplicado",
+      "licencia_vigente": true
+    },
+    "archivo_md": "duplicado_licencia.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Su licencia actual está vigente?",
+      "¿Tiene la denuncia policial?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "22",
+        "seccion": "DUPLICADO DE LA LICENCIA DE CONDUCIR"
+      }
+    ]
+  },
+  {
+    "id": "homologacion_licencia_amateur",
+    "titulo": "Homologación de licencia de conducir (canje exterior o departamento)",
+    "condiciones": {
+      "tramite": "homologacion",
+      "grupo_categoria": "amateur"
+    },
+    "archivo_md": "homologacion_licencia_amateur.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Su licencia es del exterior o de otro departamento de Uruguay?",
+      "¿Qué categorías quiere homologar?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "23",
+        "seccion": "HOMOLOGACIÓN DE LICENCIA DE CONDUCIR"
+      }
+    ]
+  }
+]

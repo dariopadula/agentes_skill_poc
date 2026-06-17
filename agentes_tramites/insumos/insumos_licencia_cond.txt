@@ -1,0 +1,557 @@
+A continuación, presento los insumos estructurados para la arquitectura de tu agente orientado a trámites de licencia de conducir, basados estrictamente en las fuentes proporcionadas.
+
+### 1. Archivo hojas_terminales.json
+
+```json
+[
+  {
+    "id": "licencia_primera_vez_a_hasta_74",
+    "titulo": "Licencia de conducir por primera vez categoría A hasta 74 años",
+    "condiciones": {
+      "tramite": "primera_vez",
+      "grupo_categoria": "amateur",
+      "categorias": ["A"],
+      "edad_min": 18,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "licencia_primera_vez_a_hasta_74.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué vehículo quiere conducir?",
+      "¿Es su primera licencia?",
+      "¿Qué edad tiene?",
+      "¿Tiene alguna patología médica restrictiva?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "14",
+        "seccion": "LICENCIA DE CONDUCIR POR PRIMERA VEZ HASTA 74 AÑOS CATEGORÍA A"
+      }
+    ]
+  },
+  {
+    "id": "licencia_primera_vez_g1_g2_hasta_74",
+    "titulo": "Licencia de conducir por primera vez categorías G1 o G2 hasta 74 años",
+    "condiciones": {
+      "tramite": "primera_vez",
+      "grupo_categoria": "amateur",
+      "categorias": ["G1", "G2"],
+      "edad_min": 16,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "licencia_primera_vez_g1_g2_hasta_74.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué tipo de moto quiere conducir?",
+      "¿Es su primera licencia?",
+      "¿Qué edad tiene?",
+      "¿Tiene alguna patología médica restrictiva?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "18",
+        "seccion": "LICENCIA DE CONDUCIR POR PRIMERA VEZ CATEGORÍA G1 Y G2 (MOTOS) HASTA 74 AÑOS INCLUSIVE"
+      }
+    ]
+  },
+  {
+    "id": "licencia_profesional_primera_vez",
+    "titulo": "Licencia de conducir profesional por primera vez (B, C, D, E, F, H, G3)",
+    "condiciones": {
+      "tramite": "primera_vez",
+      "grupo_categoria": "profesional",
+      "categorias": ["B", "C", "D", "E", "F", "H", "G3"],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "licencia_profesional_primera_vez.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿A qué categoría profesional aspira?",
+      "¿Qué edad tiene?",
+      "¿Tiene antigüedad en otras categorías?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "16",
+        "seccion": "LICENCIA DE CONDUCIR PROFESIONAL POR PRIMERA VEZ"
+      }
+    ]
+  },
+  {
+    "id": "renovacion_a_g1_g2_hasta_74_sin_patologias",
+    "titulo": "Renovación de licencia A, G1 o G2 hasta 74 años sin patologías",
+    "condiciones": {
+      "tramite": "renovacion",
+      "grupo_categoria": "amateur",
+      "categorias": ["A", "G1", "G2"],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": false
+    },
+    "archivo_md": "renovacion_a_g1_g2_hasta_74_sin_patologias.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué categoría de licencia tiene?",
+      "¿Qué edad tiene?",
+      "¿Tiene patologías o restricciones médicas registradas?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "25",
+        "seccion": "RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS A, G1 Y G2 HASTA 74 AÑOS INCLUSIVE SIN PATOLOGÍAS RESTRICTIVAS"
+      }
+    ]
+  },
+  {
+    "id": "renovacion_a_g1_g2_hasta_74_con_patologias",
+    "titulo": "Renovación de licencia A, G1 o G2 hasta 74 años con patologías",
+    "condiciones": {
+      "tramite": "renovacion",
+      "grupo_categoria": "amateur",
+      "categorias": ["A", "G1", "G2"],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": true
+    },
+    "archivo_md": "renovacion_a_g1_g2_hasta_74_con_patologias.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué categoría de licencia tiene?",
+      "¿Qué edad tiene?",
+      "¿Tiene patologías como diabetes, problemas visuales o auditivos?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "26",
+        "seccion": "RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS A, G1 Y G2 HASTA 74 AÑOS INCLUSIVE CON PATOLOGÍAS RESTRICTIVAS"
+      }
+    ]
+  },
+  {
+    "id": "renovacion_profesional",
+    "titulo": "Renovación de licencia profesional (B, C, D, E, F, H, G3)",
+    "condiciones": {
+      "tramite": "renovacion",
+      "grupo_categoria": "profesional",
+      "categorias": ["B", "C", "D", "E", "F", "H", "G3"],
+      "edad_min": null,
+      "edad_max": 74,
+      "patologias": null
+    },
+    "archivo_md": "renovacion_profesional.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Qué categoría profesional tiene?",
+      "¿Qué edad tiene?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "28",
+        "seccion": "RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS PROFESIONALES"
+      }
+    ]
+  },
+  {
+    "id": "duplicado_licencia",
+    "titulo": "Duplicado de licencia de conducir por hurto o extravío",
+    "condiciones": {
+      "tramite": "duplicado",
+      "licencia_vigente": true
+    },
+    "archivo_md": "duplicado_licencia.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Su licencia actual está vigente?",
+      "¿Tiene la denuncia policial?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "22",
+        "seccion": "DUPLICADO DE LA LICENCIA DE CONDUCIR"
+      }
+    ]
+  },
+  {
+    "id": "homologacion_licencia_amateur",
+    "titulo": "Homologación de licencia de conducir (canje exterior o departamento)",
+    "condiciones": {
+      "tramite": "homologacion",
+      "grupo_categoria": "amateur"
+    },
+    "archivo_md": "homologacion_licencia_amateur.md",
+    "preguntas_necesarias": [
+      "¿Qué trámite quiere realizar?",
+      "¿Su licencia es del exterior o de otro departamento de Uruguay?",
+      "¿Qué categorías quiere homologar?"
+    ],
+    "fuentes": [
+      {
+        "documento": "Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf",
+        "pagina": "23",
+        "seccion": "HOMOLOGACIÓN DE LICENCIA DE CONDUCIR"
+      }
+    ]
+  }
+]
+```
+
+---
+
+### 2. Archivos Markdown
+
+#### licencia_primera_vez_a_hasta_74.md
+
+# Licencia de conducir por primera vez categoría A hasta 74 años
+
+## Cuándo aplica
+Este caso corresponde a personas de entre 18 y 74 años que desean obtener su Permiso Único Nacional de Conducir (PUNC) por primera vez para autos y camionetas (hasta 4000 kg de PBT) y no presentan patologías médicas restrictivas registradas.
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Nueva licencia)
+2. ¿Qué vehículo quiere conducir? (Auto/Camioneta - Cat. A)
+3. ¿Es su primera licencia? (Sí)
+4. ¿Qué edad tiene? (Entre 18 y 74 años)
+5. ¿Tiene alguna patología médica restrictiva? (No)
+
+## Requisitos
+- **Certificado médico** de aptitud psicofísica realizado en instituciones habilitadas de Montevideo (vigencia 30 días).
+- **Cédula de Identidad** vigente y en buen estado (o pasaporte uruguayo/carné diplomático) y fotocopia.
+- **Recibo de pago** del trámite "aspirante" realizado en redes de cobranza o Tesorería de la IM.
+- No tener **multas de tránsito impagas**.
+- Si tiene licencias de otras categorías (ej. motos), debe presentarlas.
+
+## Cómo se hace
+1. Realizar el examen médico en una institución habilitada.
+2. Abonar el costo del trámite.
+3. Concurrir directamente al Servicio de Conductores de la Intendencia con toda la documentación.
+4. Agendar personalmente los exámenes teórico y práctico.
+
+## Agenda
+Para el inicio del trámite amateur, el protocolo indica concurrir directamente al Servicio de Conductores tras tener el certificado médico y el pago. Los exámenes teórico y práctico se agendan allí mismo de forma personal.
+
+## Alertas importantes
+- **Vigencia:** La primera licencia siempre se otorga por **2 años**.
+- **Examen práctico:** No se puede realizar en vehículos automáticos ni en vehículos de transporte público (SAM, SES, etc.).
+- **Acompañante:** Si rinde libre (sin academia), el acompañante debe tener más de 21 años y 2 años de antigüedad en la categoría.
+- **Faltas:** No presentarse al examen agendado genera una multa de "ausente".
+
+## Texto base para responder al ciudadano
+Para sacar tu licencia de auto por primera vez, primero debés hacerte el examen médico en una clínica habilitada y pagar el costo del trámite en un local de cobranzas. Una vez que tengas eso, presentate directamente en la Intendencia (Servicio de Conductores) con tu cédula y el certificado médico para iniciar el trámite y agendar tus exámenes. Recordá que no podés tener multas pendientes y, si vas a dar el examen con tu propio coche, este debe tener seguro (SOA) al día y, si tiene más de 5 años, la inspección técnica vigente.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf.
+- Páginas: 14 y 15.
+- Sección: LICENCIA DE CONDUCIR POR PRIMERA VEZ HASTA 74 AÑOS CATEGORÍA A.
+
+---
+
+#### licencia_primera_vez_g1_g2_hasta_74.md
+
+# Licencia de conducir por primera vez categorías G1 o G2 hasta 74 años
+
+## Cuándo aplica
+Aplica a personas (desde 16 años para G1) que buscan su primera licencia para ciclomotores (G1) o motocicletas de hasta 200 cc (G2) y no tienen patologías restrictivas.
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Nueva licencia)
+2. ¿Qué tipo de moto quiere conducir? (Ciclomotor G1 o Moto G2)
+3. ¿Es su primera licencia? (Sí)
+4. ¿Qué edad tiene? (Mínimo 16 para G1, 18 para G2)
+
+## Requisitos
+- **Certificado médico** (clínicas habilitadas, 30 días vigencia).
+- **Cédula de Identidad** vigente y fotocopia.
+- **Recibo de pago** "aspirante".
+- **SOA vigente** para motos de más de 70 cc.
+- **Autorización de padres:** Obligatoria para aspirantes de 16 años (G1).
+
+## Cómo se hace
+1. Obtener certificado médico amateur y pagar el trámite.
+2. Acudir al Servicio de Conductores con la documentación.
+3. Agendar exámenes teórico y práctico.
+
+## Agenda
+Concurrencia directa al Servicio de Conductores para el inicio. Agendamiento presencial para los exámenes.
+
+## Alertas importantes
+- **Categoría G2:** El examen práctico debe rendirse en motos con **embrague manual y cambios no automáticos**.
+- **Menores:** Para G1 con 16 años, deben ir acompañados por padre/madre con libreta de matrimonio o partida de nacimiento.
+- **Multas:** No se permite iniciar si hay multas impagas.
+
+## Texto base para responder al ciudadano
+Si querés sacar libreta de moto, primero tenés que ir a una de las clínicas médicas autorizadas por la Intendencia. Con el certificado médico y el pago hecho, vas a la Intendencia para agendar tus pruebas. Si vas por la categoría G2 (motos de hasta 200cc), tené en cuenta que el examen práctico se toma sí o sí en una moto con cambios y embrague manual. ¡No te olvides de llevar el seguro de la moto vigente!
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf.
+- Páginas: 18 y 19.
+- Sección: LICENCIA DE CONDUCIR POR PRIMERA VEZ CATEGORÍA G1 Y G2 (MOTOS).
+
+---
+
+#### licencia_profesional_primera_vez.md
+
+# Licencia de conducir profesional por primera vez (B, C, D, E, F, H, G3)
+
+## Cuándo aplica
+Personas de hasta 74 años que desean obtener categorías profesionales para transporte de carga o pasajeros.
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Licencia profesional)
+2. ¿A qué categoría aspira? (B, C, D, E, F, H o G3)
+3. ¿Qué edad tiene? (Debe ser menor a 75 años)
+
+## Requisitos
+- **Agenda previa** para examen médico en la Intendencia.
+- **Análisis de sangre y orina:** VDRL, perfil lipídico y glicemia (vigencia 180 días).
+- **Vacuna antitetánica** vigente.
+- **Cédula de identidad** vigente.
+- **Licencia anterior (Cat. A):** Se debe concurrir con ella.
+- **Antigüedad:** Según la categoría, excepto para B y H que no requieren antigüedad previa.
+
+## Cómo se hace
+1. **Agendar examen médico** en la IM (teléfono 1950 4000 o web).
+2. Presentarse con los análisis clínicos y vacuna antitetánica.
+3. **Pagar el trámite después** de la evaluación médica.
+4. Si es particular, agendar pruebas teórica y práctica en el Servicio de Conductores.
+
+## Agenda
+Requiere **agenda electrónica obligatoria** para el examen médico inicial en la Intendencia.
+
+## Alertas importantes
+- **Edad límite:** No se otorgan licencias profesionales a partir de los 75 años.
+- **Diabetes:** Los diabéticos insulino-dependientes no pueden obtener categorías profesionales (Art. R.424.190).
+- **Prueba práctica:** No se puede usar vehículos automáticos.
+- **Categoría E:** Exonerada de examen práctico si la licencia anterior no venció hace más de 2 años.
+
+## Texto base para responder al ciudadano
+Para sacar la licencia profesional, el primer paso es agendarte para el examen médico que se hace en la propia Intendencia. Antes de ir a la cita, tenés que tener listos tus análisis de sangre y orina (perfil lipídico, VDRL y glicemia) y la vacuna antitetánica vigente. El pago se hace recién después de que el médico te dé el apto. Si vas a dar la prueba práctica de forma particular, recordá que el vehículo no puede tener deudas de patente.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf y Portal trámites (Aspirante profesional).
+- Páginas: 16 y 17 (Protocolo).
+- Sección: LICENCIA DE CONDUCIR PROFESIONAL POR PRIMERA VEZ.
+
+---
+
+#### renovacion_a_g1_g2_hasta_74_sin_patologias.md
+
+# Renovación de licencia A, G1 o G2 hasta 74 años sin patologías
+
+## Cuándo aplica
+Conductores con licencias amateur (A, G1, G2) vigentes o vencidas, que tengan hasta 74 años y no posean restricciones médicas.
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Renovación)
+2. ¿Qué categoría de licencia tiene? (A, G1, G2)
+3. ¿Qué edad tiene? (Hasta 74 años)
+4. ¿Tiene patologías médicas registradas? (No)
+
+## Requisitos
+- **Certificado Médico Amateur** realizado en instituciones habilitadas.
+- **Cédula de Identidad** vigente y fotocopia.
+- **Licencias anteriores** (todas las que posea).
+- **Comprobante de pago** (se abona antes de ir, según los años de vigencia que indique el médico).
+- No tener **multas de tránsito impagas**.
+
+## Cómo se hace
+1. Realizar el examen médico en una clínica habilitada.
+2. Abonar el trámite en redes de cobranza (Abitab/Redpagos).
+3. Reservar día y hora (agenda electrónica, WhatsApp o 1950 4000).
+4. Presentarse en la Intendencia el día agendado con toda la documentación.
+
+## Agenda
+Requiere **agenda previa** obligatoria para presentarse en la Intendencia.
+
+## Alertas importantes
+- **Vencimiento > 2 años:** Si la licencia venció hace más de dos años, se debe rendir examen teórico y práctico nuevamente.
+- **Anticipación:** Se puede renovar desde 30 días antes del vencimiento.
+- **Vigencia:** La escala de plazos baja a partir de los 56 años (ej. a los 60 años el máximo son 5 años).
+
+## Texto base para responder al ciudadano
+Para renovar tu licencia amateur, primero tenés que ir a una de las clínicas médicas autorizadas. Con el certificado médico, pagás el trámite en un Abitab o Redpagos. Después, sacás turno por la web de la Intendencia o por WhatsApp para ir a retirar tu nueva licencia. ¡Atención! Si tu licencia venció hace más de dos años, vas a tener que dar las pruebas teórica y práctica de nuevo.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf.
+- Página: 25.
+- Sección: RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS A, G1 Y G2 HASTA 74 AÑOS INCLUSIVE SIN PATOLOGÍAS RESTRICTIVAS.
+
+---
+
+#### renovacion_a_g1_g2_hasta_74_con_patologias.md
+
+# Renovación de licencia A, G1 o G2 hasta 74 años con patologías
+
+## Cuándo aplica
+Personas con licencias amateur que tienen patologías registradas (códigos 4, 24, 31, 37, entre otras) que requieren examen médico en la Intendencia.
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Renovación con patología)
+2. ¿Qué edad tiene? (Hasta 74 años)
+3. ¿Qué patología médica tiene registrada?
+
+## Requisitos
+- **Examen médico en la Intendencia** (agenda previa).
+- **Certificado del médico tratante** con diagnóstico y tratamiento.
+- **Estudios específicos:** Ej. fondo de ojo para diabetes, campo visual para glaucoma.
+- **Cédula de Identidad** y licencia anterior.
+- **Pago:** Se realiza después de la evaluación médica en la IM.
+
+## Cómo se hace
+1. Agendar examen médico en la Intendencia.
+2. Concurrir con informes de su médico tratante y estudios solicitados.
+3. Tras la aprobación médica, abonar el trámite.
+
+## Agenda
+Requiere **agenda obligatoria** específicamente para "Renovación con patologías" en la Intendencia.
+
+## Alertas importantes
+- **Lentes:** Quienes usan lentes de contacto deben llevar obligatoriamente lentes de armazón.
+- **Diabetes:** Diabéticos insulino-dependientes deben aportar fondo de ojo actualizado, hemoglobina glucosilada y función renal.
+
+## Texto base para responder al ciudadano
+Como tenés una restricción médica en tu licencia, el examen de aptitud física debés hacértelo sí o sí en la Intendencia. Tenés que agendarte para "Renovación con patologías" y llevar un informe de tu médico personal que explique tu diagnóstico y tratamiento. También llevá cualquier estudio que tengas (como el de la vista). El pago de la renovación lo hacés ahí mismo después de que te vea el médico de la IM.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf.
+- Páginas: 26 y 27.
+- Sección: RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS A, G1 Y G2 HASTA 74 AÑOS INCLUSIVE CON PATOLOGÍAS RESTRICTIVAS.
+
+---
+
+#### renovacion_profesional.md
+
+# Renovación de licencia profesional (B, C, D, E, F, H, G3)
+
+## Cuándo aplica
+Conductores con categorías profesionales vigentes o vencidas que necesitan renovar su permiso.
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Renovación profesional)
+2. ¿Qué categoría profesional tiene?
+3. ¿Qué edad tiene?
+
+## Requisitos
+- **Examen médico en la Intendencia** (requiere agenda).
+- **Análisis clínicos:** VDRL, perfil lipídico y glicemia (sangre y orina).
+- **Vacuna antitetánica** al día.
+- **Cédula de Identidad** y licencia anterior.
+- No tener multas impagas.
+
+## Cómo se hace
+1. Obtener los análisis de laboratorio clínicos (privados o públicos).
+2. Agendarse para médico profesional en la Intendencia.
+3. Concurrir a la cita médica con los resultados y la vacuna.
+4. Abonar el trámite en Tesorería tras el apto médico.
+
+## Agenda
+Requiere **agenda previa** obligatoria para el servicio médico de la Intendencia.
+
+## Alertas importantes
+- **Vigencia máxima:** No puede exceder los 75 años de edad.
+- **Prueba práctica:** Obligatoria a partir de los 75 años (aunque se renueve por 1 año).
+- **Vencimiento > 2 años:** Requiere rendir exámenes teórico y práctico de nuevo.
+
+## Texto base para responder al ciudadano
+Para renovar tu licencia profesional, primero tenés que sacar turno para el examen médico en la Intendencia. Antes de ir, asegurate de tener listos los análisis de glicemia, perfil lipídico y VDRL, además de la vacuna antitetánica vigente. Llevá tu cédula y la licencia vieja. El costo de la renovación se paga en el momento, después de que el médico te dé el visto bueno.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf.
+- Páginas: 28 y 29.
+- Sección: RENOVACIÓN - LICENCIA DE CONDUCIR CATEGORÍAS PROFESIONALES.
+
+---
+
+#### duplicado_licencia.md
+
+# Duplicado de licencia de conducir por hurto o extravío
+
+## Cuándo aplica
+Aplica para obtener una copia de una licencia de conducir que aún está **vigente**, pero que fue hurtada, extraviada o se encuentra en mal estado [22, 228; 9, 81].
+
+## Preguntas necesarias
+1. ¿Qué trámite quiere realizar? (Duplicado)
+2. ¿Su licencia actual está vigente? (Sí)
+3. ¿Tiene la denuncia policial por extravío o hurto?
+
+## Requisitos
+- **Denuncia policial** donde conste el hurto o extravío del permiso de conducir [22, 228; 9, 81].
+- **Cédula de Identidad** o pasaporte vigente.
+- **Comprobante de pago:** Debe abonarse antes de ir a la Intendencia ($1.283) [22, 228; 9, 81].
+- No tener multas de tránsito pendientes.
+- Si tiene otra categoría de licencia (ej. profesional y amateur), debe presentar la que tenga en su poder.
+
+## Cómo se hace
+1. Hacer la denuncia policial (si es por hurto o extravío).
+2. Abonar el costo del duplicado en redes de cobranza.
+3. Reservar día y hora por agenda electrónica o WhatsApp.
+4. Concurrir a la Intendencia el día agendado con la denuncia y el recibo.
+
+## Agenda
+- **Amateur:** Requiere agenda previa.
+- **Profesional:** Según el protocolo de 2019, era sin agenda, pero el portal de trámites actual (2026) indica reserva general para duplicados [9, 83; 22, 228].
+
+## Alertas importantes
+- **Vencimiento próximo:** Si a la licencia le falta menos de un año para vencer, se recomienda hacer directamente el trámite de renovación.
+- **Multas:** Las multas impagas bloquean este trámite.
+
+## Texto base para responder al ciudadano
+Si perdiste o te robaron la licencia y todavía no venció, podés pedir un duplicado. Primero hacé la denuncia policial y pagá el costo del duplicado en un local de cobranzas. Después, sacá un turno por la web de la Intendencia para ir a retirarla. Si a tu licencia le falta menos de un año para vencer, quizás te convenga hacer la renovación de una vez y te ahorrás un trámite.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf y Portal trámites (Duplicado).
+- Página: 22 (Protocolo).
+- Sección: DUPLICADO DE LA LICENCIA DE CONDUCIR.
+
+---
+
+#### homologacion_licencia_amateur.md
+
+# Homologación de licencia de conducir (canje exterior o departamento)
+
+## Cuándo aplica
+Para obtener la licencia de Montevideo a partir de una licencia vigente de otro departamento de Uruguay o del exterior.
+
+## Preguntas necesarias
+1. ¿Su licencia es del exterior o de otro departamento?
+2. ¿Qué categorías quiere homologar? (A, G1, G2)
+3. ¿Su licencia está vigente?
+
+## Requisitos
+- **Cédula de Identidad** uruguaya vigente.
+- **Licencia vigente:** No se homologan licencias vencidas (en ese caso es trámite de aspirante).
+- **Certificado médico amateur** (clínicas habilitadas).
+- **Exterior:** Certificado de antecedentes/hoja de vida apostillado (excepto España/Italia por convenio) [14, 121; 22, 231].
+- **Otros departamentos:** Solo si el vencimiento es mayor a 1 año.
+
+## Cómo se hace
+1. Obtener certificado médico y apostillar antecedentes si viene del exterior.
+2. Agendarse para "Homologaciones".
+3. Presentarse en la Intendencia con toda la documentación.
+4. El pago se realiza después de verificada la documentación en Tesorería.
+
+## Agenda
+Requiere **agenda electrónica** obligatoria (sección Homologaciones).
+
+## Alertas importantes
+- **España:** Por convenio bilateral, la licencia española se retiene y se canjea según tabla de equivalencias.
+- **Sin apostilla:** Si la licencia del exterior no está apostillada, el interesado deberá rendir exámenes teórico y práctico.
+- **Vencimiento:** Si falta menos de un año para que venza la de otro departamento, corresponde renovación y no homologación.
+
+## Texto base para responder al ciudadano
+Si tenés una licencia vigente de otro país o de otro departamento y querés la de Montevideo, tenés que hacer la homologación. Vas a necesitar el certificado médico amateur y, si venís del exterior, un certificado de antecedentes de tu país apostillado. Si tu licencia es de España, recordá que la Intendencia se la queda al darte la uruguaya. Sacá turno web para "Homologaciones" y llevá todo a la Intendencia.
+
+## Fuente
+- Documento: Protocolo Agendas y Multas 25.04.2019 (1)(1).pdf y Portal trámites (Homologación).
+- Página: 23 y 24 (Protocolo).
+- Sección: HOMOLOGACIÓN DE LICENCIA DE CONDUCIR.

@@ -1,0 +1,33 @@
+
+# Entornos temporales
+.venv/
+
+# Variables de entorno
+.env
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Otras cosas
+.vscode/
+.ipynb_checkpoints/
+
+# Logs y cache
+*.log
+.pytest_cache/
+
+# Cachés de LangGraph
+.langgraph/
+
+# Datos y bases de datos
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+
+# Bases vectoriales locales
+vector_db/
+
+# Otros insumos
+**/documentos_terminales/*
