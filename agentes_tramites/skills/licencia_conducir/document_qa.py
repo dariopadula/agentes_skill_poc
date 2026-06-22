@@ -1,6 +1,6 @@
-import os
 import re
-from functools import lru_cache
+
+from llm_client import build_llm_client, get_model
 
 
 MAX_HISTORY_MESSAGES = 8
@@ -17,15 +17,6 @@ Reglas:
 - Cuando corresponda, mencioná la sección del documento que respalda la respuesta.
 - No confundas información de otros trámites.
 """.strip()
-
-
-@lru_cache(maxsize=1)
-def get_client():
-    from openai import OpenAI
-
-    if not os.getenv("OPENAI_API_KEY"):
-        return None
-    return OpenAI()
 
 
 def generate_initial_summary(markdown: str) -> str:
@@ -62,24 +53,25 @@ def answer_document_question(
 
 
 def _call_model(markdown: str, messages: list[dict[str, str]]) -> str:
-    client = get_client()
-    if client is None:
-        raise RuntimeError("OPENAI_API_KEY no está configurada.")
-
-    response = client.responses.create(
-        model=os.getenv("OPENAI_MODEL", "gpt-5-mini"),
-        instructions=BASE_INSTRUCTIONS,
-        input=[
+    client = build_llm_client()
+    response = client.chat.completions.create(
+        model=get_model("document"),
+        messages=[
             {
-                "role": "developer",
+                "role": "system",
+                "content": BASE_INSTRUCTIONS,
+            },
+            {
+                "role": "system",
                 "content": f"DOCUMENTO DE REFERENCIA:\n\n{markdown}",
             },
             *messages,
         ],
     )
-    if not response.output_text:
-        raise RuntimeError("OpenAI no devolvió texto.")
-    return response.output_text.strip()
+    content = response.choices[0].message.content
+    if not content:
+        raise RuntimeError("El proveedor LLM no devolvió texto.")
+    return content.strip()
 
 
 def _fallback_initial_summary(markdown: str) -> str:

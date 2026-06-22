@@ -4,8 +4,15 @@ import re
 from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
+from llm_client import (
+    build_llm_client,
+    get_llm_provider,
+    get_model,
+    get_provider_name,
+    is_llm_configured,
+)
 from utils.text import normalize_text
 
 
@@ -55,12 +62,14 @@ class KeywordRouter:
 
 
 class ExtractedFields(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     tramite: Literal[
         "primera_vez",
         "renovacion",
         "duplicado",
         "homologacion",
-    ] | None = None
+    ] | None
     categoria: Literal[
         "A",
         "G1",
@@ -72,41 +81,39 @@ class ExtractedFields(BaseModel):
         "F",
         "H",
         "G3",
-    ] | None = None
-    grupo_categoria: Literal["amateur", "profesional"] | None = None
-    edad: int | None = Field(default=None, ge=0, le=120)
-    patologias: bool | None = None
-    licencia_vigente: bool | None = None
+    ] | None
+    grupo_categoria: Literal["amateur", "profesional"] | None
+    edad: int | None = Field(ge=0, le=120)
+    patologias: bool | None
+    licencia_vigente: bool | None
 
 
 class LLMRouteResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     skill: str
     confidence: float = Field(ge=0.0, le=1.0)
     extracted_fields: ExtractedFields
 
 
-class OpenAIRouter:
-    """Router semántico con salida estructurada mediante OpenAI."""
+class LLMRouter:
+    """Router semántico independiente del proveedor configurado."""
 
     def __init__(
         self,
         catalog: dict[str, dict[str, object]],
         model: str | None = None,
     ) -> None:
-        # El import diferido permite usar el modo local sin instalar/cargar el SDK.
-        from openai import OpenAI
-
-        if not os.getenv("OPENAI_API_KEY"):
-            raise RuntimeError("Falta la variable de entorno OPENAI_API_KEY.")
-
-        self.client = OpenAI()
-        self.model = model or os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
+        self.client = build_llm_client()
+        self.model = model or get_model("router")
+        self.provider = get_llm_provider()
+        self.provider_name = get_provider_name()
         self.catalog = catalog
 
     def route(self, text: str) -> RouteDecision:
-        response = self.client.responses.parse(
+        response = self.client.chat.completions.create(
             model=self.model,
-            input=[
+            messages=[
                 {
                     "role": "system",
                     "content": (
@@ -115,22 +122,34 @@ class OpenAIRouter:
                         "o devolvé 'unknown' si ninguna corresponde. Extraé "
                         "solamente datos expresados por el usuario y únicamente "
                         "si figuran en datos_que_puede_extraer para la skill. "
-                        "No inventes datos.\n\n"
+                        "No inventes datos. Devolvé todos los campos del esquema; "
+                        "usá null cuando un dato no haya sido expresado.\n\n"
                         f"CATÁLOGO:\n{json.dumps(self.catalog, ensure_ascii=False)}"
                     ),
                 },
                 {"role": "user", "content": text},
             ],
-            text_format=LLMRouteResult,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "route_decision",
+                    "strict": True,
+                    "schema": LLMRouteResult.model_json_schema(),
+                },
+            },
         )
 
-        parsed = response.output_parsed
-        if parsed is None:
-            raise RuntimeError("OpenAI no devolvió una decisión estructurada.")
+        content = response.choices[0].message.content
+        if not content:
+            raise RuntimeError(
+                f"{self.provider_name} no devolvió una decisión estructurada."
+            )
+        parsed = LLMRouteResult.model_validate_json(content)
 
         if parsed.skill != "unknown" and parsed.skill not in self.catalog:
             raise RuntimeError(
-                f"OpenAI devolvió una skill no registrada: {parsed.skill}"
+                f"{self.provider_name} devolvió una skill no registrada: "
+                f"{parsed.skill}"
             )
 
         return RouteDecision(
@@ -156,6 +175,12 @@ class FallbackRouter:
             self.last_error = str(exc)
             return self.fallback.route(text)
 
+    def consume_last_error(self) -> str | None:
+        """Devuelve el último error y evita volver a mostrarlo."""
+        error = self.last_error
+        self.last_error = None
+        return error
+
 
 def build_router(
     catalog: dict[str, dict[str, object]],
@@ -171,10 +196,10 @@ def build_router(
     if selected_mode not in {"llm", "auto"}:
         raise ValueError("ROUTER_MODE debe ser 'keywords', 'llm' o 'auto'.")
 
-    if not os.getenv("OPENAI_API_KEY"):
+    if not is_llm_configured("router"):
         return keyword_router
 
     return FallbackRouter(
-        primary=OpenAIRouter(catalog),
+        primary=LLMRouter(catalog),
         fallback=keyword_router,
     )

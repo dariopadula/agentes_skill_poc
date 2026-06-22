@@ -142,28 +142,36 @@ El router responde con un contrato común:
 Actualmente existen tres modos:
 
 - `keywords`: selección local mediante `palabras_clave`.
-- `auto`: usa OpenAI si existe una API key; de lo contrario usa keywords.
-- `llm`: intenta usar OpenAI y conserva el router local como fallback.
+- `auto`: usa el proveedor LLM si su configuración está completa; de lo
+  contrario usa keywords.
+- `llm`: intenta usar OpenAI o LM Studio según `LLM_PROVIDER` y conserva el
+  router local como fallback.
 
 El router con LLM construye su prompt a partir de
 `skills/skill_registry.json`. Por eso conoce las descripciones, ejemplos y
 reglas de uso de todas las skills registradas.
 
-El proveedor podría cambiarse sin modificar el orquestador:
+La fábrica común construye un cliente compatible con OpenAI y selecciona el
+modelo según el rol:
+
+- `ROUTER_MODEL`: clasificación y extracción inicial.
+- `DOCUMENT_MODEL`: resumen y preguntas sobre documentos terminales.
+
+El proveedor puede cambiarse sin modificar el orquestador:
 
 ```mermaid
 flowchart LR
-    CAT[Catálogo de skills] --> OA[OpenAI Router]
-    CAT --> OL[Ollama Router]
-    CAT --> LM[LM Studio Router]
-
-    OA --> RD[RouteDecision]
-    OL --> RD
-    LM --> RD
+    ENV[Configuración] --> FACTORY[Fábrica de clientes LLM]
+    FACTORY --> OA[OpenAI]
+    FACTORY --> LM[LM Studio]
+    CAT[Catálogo de skills] --> ROUTER[LLM Router]
+    OA --> ROUTER
+    LM --> ROUTER
+    ROUTER --> RD[RouteDecision]
 ```
 
-Un modelo local podría ejecutarse mediante Ollama, LM Studio o llama.cpp. Cada
-adaptador debe transformar su respuesta al mismo `RouteDecision`.
+Ambos proveedores usan `chat.completions`. El router solicita una respuesta
+JSON estructurada y la valida con Pydantic antes de producir `RouteDecision`.
 
 ## 4. Contrato de las skills
 
@@ -454,7 +462,7 @@ Actualmente están implementados:
 - Catálogo JSON con dos skills.
 - Registro dinámico de handlers.
 - Router por palabras clave.
-- Router opcional con OpenAI y fallback local.
+- Router configurable con OpenAI o LM Studio y fallback local.
 - Estado conversacional en memoria.
 - Skill funcional de licencia de conducir.
 - Grafo LangGraph y ocho documentos terminales para licencia.

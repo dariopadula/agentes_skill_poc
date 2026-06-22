@@ -84,23 +84,41 @@ python app.py
 Modos disponibles:
 
 - `keywords`: siempre usa reglas locales y no hace llamadas externas.
-- `auto`: usa OpenAI cuando existe `OPENAI_API_KEY`; si no, usa reglas.
-- `llm`: selecciona OpenAI cuando hay una clave, con fallback local si la
-  llamada falla. Sin clave también continúa con reglas locales.
+- `auto`: usa el proveedor LLM cuando su configuración está completa; si no,
+  usa reglas.
+- `llm`: intenta usar el proveedor configurado y conserva el router local como
+  fallback.
 
-Para habilitar OpenAI más adelante:
+Para usar LM Studio:
 
 ```env
+ROUTER_MODE="llm"
+LLM_PROVIDER="lmstudio"
+LM_STUDIO_BASE_URL="http://localhost:1234/v1"
+LM_STUDIO_API_KEY="lm-studio"
+ROUTER_MODEL="identificador-del-modelo-router"
+DOCUMENT_MODEL="identificador-del-modelo-documental"
+```
+
+Los identificadores deben coincidir exactamente con los publicados por
+`http://localhost:1234/v1/models`.
+
+Para usar OpenAI:
+
+```env
+ROUTER_MODE="llm"
+LLM_PROVIDER="openai"
 OPENAI_API_KEY="tu-api-key"
-ROUTER_MODE="auto"
-OPENAI_MODEL="gpt-4.1-mini"
+ROUTER_MODEL="modelo-router"
+DOCUMENT_MODEL="modelo-documental"
 ```
 
 El archivo `.env` se busca en la carpeta padre de `agentes_tramites`,
-independientemente de la carpeta actual de la terminal. `OPENAI_MODEL` es
-opcional. La clave debe mantenerse fuera del código y de Git. El LLM sólo
-selecciona la skill y extrae campos; requisitos y pasos continúan saliendo del
-YAML local.
+independientemente de la carpeta actual de la terminal. Las claves deben
+mantenerse fuera del código y de Git. `OPENAI_MODEL` se conserva como variable
+de compatibilidad si no se definen los modelos por rol. El LLM router sólo
+selecciona la skill y extrae campos; requisitos y pasos continúan saliendo de
+las fuentes locales de cada trámite.
 
 ## Agregar una nueva skill
 
