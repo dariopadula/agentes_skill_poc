@@ -51,7 +51,9 @@
       "reformar",
       "ampliación",
       "ampliar",
-      "regularizar"
+      "regularizar",
+      "ochava",
+      "ochavas"
     ],
     "handler": "skills.permiso_construccion.handler:handle"
   }

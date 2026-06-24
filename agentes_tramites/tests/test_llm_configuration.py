@@ -4,7 +4,9 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 from llm_client import (
+    build_embedding_client,
     build_llm_client,
+    get_embedding_provider,
     get_llm_provider,
     get_model,
     is_llm_configured,
@@ -27,24 +29,43 @@ CATALOG = {
 class LLMConfigurationTests(unittest.TestCase):
     def tearDown(self) -> None:
         build_llm_client.cache_clear()
+        build_embedding_client.cache_clear()
 
     def test_lmstudio_configuration_selects_models_by_role(self) -> None:
         environment = {
             "LLM_PROVIDER": "lmstudio",
+            "EMBEDDING_PROVIDER": "lmstudio",
             "LM_STUDIO_BASE_URL": "http://localhost:1234/v1",
             "ROUTER_MODEL": "router-local",
             "DOCUMENT_MODEL": "document-local",
+            "EMBEDDING_MODEL": "embedding-local",
         }
         with patch.dict(os.environ, environment, clear=True):
             self.assertEqual(get_llm_provider(), "lmstudio")
+            self.assertEqual(get_embedding_provider(), "lmstudio")
             self.assertEqual(get_model("router"), "router-local")
             self.assertEqual(get_model("document"), "document-local")
+            self.assertEqual(get_model("embedding"), "embedding-local")
             self.assertTrue(is_llm_configured("router"))
+            self.assertTrue(is_llm_configured("embedding"))
 
     def test_unknown_provider_is_rejected(self) -> None:
         with patch.dict(os.environ, {"LLM_PROVIDER": "otro"}, clear=True):
             with self.assertRaises(ValueError):
                 get_llm_provider()
+
+    def test_embedding_provider_can_differ_from_llm_provider(self) -> None:
+        environment = {
+            "LLM_PROVIDER": "openai",
+            "EMBEDDING_PROVIDER": "lmstudio",
+            "LM_STUDIO_BASE_URL": "http://localhost:1234/v1",
+            "EMBEDDING_MODEL": "embedding-local",
+        }
+        with patch.dict(os.environ, environment, clear=True):
+            self.assertEqual(get_llm_provider(), "openai")
+            self.assertEqual(get_embedding_provider(), "lmstudio")
+            self.assertEqual(get_model("embedding"), "embedding-local")
+            self.assertTrue(is_llm_configured("embedding"))
 
     @patch("openai.OpenAI")
     def test_factory_points_client_to_lmstudio(self, openai_mock) -> None:
@@ -55,6 +76,22 @@ class LLMConfigurationTests(unittest.TestCase):
         }
         with patch.dict(os.environ, environment, clear=True):
             build_llm_client()
+
+        openai_mock.assert_called_once_with(
+            base_url="http://localhost:1234/v1",
+            api_key="lm-studio",
+        )
+
+    @patch("openai.OpenAI")
+    def test_embedding_factory_points_client_to_lmstudio(self, openai_mock) -> None:
+        environment = {
+            "LLM_PROVIDER": "openai",
+            "EMBEDDING_PROVIDER": "lmstudio",
+            "LM_STUDIO_BASE_URL": "http://localhost:1234/v1",
+            "LM_STUDIO_API_KEY": "lm-studio",
+        }
+        with patch.dict(os.environ, environment, clear=True):
+            build_embedding_client()
 
         openai_mock.assert_called_once_with(
             base_url="http://localhost:1234/v1",

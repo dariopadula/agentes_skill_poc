@@ -5,9 +5,7 @@
 Esta prueba de concepto explora una arquitectura extensible para atender
 consultas sobre trámites ciudadanos.
 
-El sistema recibe una consulta, identifica la necesidad, selecciona una skill
-especializada y delega en ella la conversación. Cada skill puede implementar
-una estrategia diferente según la complejidad del trámite:
+El sistema recibe una consulta, identifica la necesidad, selecciona una skill especializada y delega en ella la conversación. Cada skill puede implementar una estrategia diferente según la complejidad del trámite:
 
 - Reglas y datos estructurados para trámites previsibles.
 - APIs para consultar sistemas transaccionales.

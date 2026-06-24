@@ -1,0 +1,230 @@
+﻿{
+    "fuente":  "https://normativa.montevideo.gub.uy/armado/82663",
+    "descripcion":  "Muestra exploratoria del Capítulo I De las ochavas del Volumen XV.",
+    "fecha_consulta":  "2026-06-24",
+    "total_articulos":  8,
+    "articulos":  [
+                      {
+                          "id":  "articulo_81743",
+                          "node_id":  "81743",
+                          "numero":  "D.3186",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Los ángulos formados por los cruces de las alineaciones de vías públicas, se sustituirán por una ochava perpendicular a su bisectriz.\nCuando se trace una curva, en lugar de la ochava, su parte más saliente será tangente interior, en su punto medio, a la ochava recta que correspondería.\nLa superficie de la ochava es una servidumbre a la que debe ajustarse el cerco o planta baja del edificio, en las zonas comprendidas entre el nivel de la acerca y una altura mínima de 2,75 m, pudiéndose realizar construcciones por encima y por debajo de dichos niveles.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/81743",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "Dto.JV 21.398 de 16.11.1983",
+                                              "url":  "https://normativa.montevideo.gub.uy/content/dtojv-21398-de-16111983",
+                                              "referencia":  "art. 2",
+                                              "observaciones":  ""
+                                          },
+                                          {
+                                              "nombre":  "Res.IMM 27.857 de 26.03.1957",
+                                              "url":  "https://normativa.montevideo.gub.uy/node/77862",
+                                              "referencia":  "num. 1",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_77702",
+                          "node_id":  "77702",
+                          "numero":  "D.3187",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "La dimensión de esa ochava será de cinco metros como mínimo, para los lugares fraccionados con anterioridad al 26 de marzo de 1957 y que por el plan de calles y de división en solares, no tengan por resolución especial, la obligación de una dimensión mayor.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/77702",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "OM de 22.06.1931",
+                                              "url":  "https://normativa.montevideo.gub.uy/content/om-de-22061931-3",
+                                              "referencia":  "art. 2",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_77703",
+                          "node_id":  "77703",
+                          "numero":  "D.3188",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Para los futuros trazados de calles y división en solares de terrenos que estén situados fuera de centros urbanos será obligatorio una ochava de ocho metros, como mínimo.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/77703",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "OM de 22.06.1931",
+                                              "url":  "https://normativa.montevideo.gub.uy/content/om-de-22061931-3",
+                                              "referencia":  "art. 3",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_79447",
+                          "node_id":  "79447",
+                          "numero":  "D.3189",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Todos los cercos o edificios que se levanten en los ángulos de dos vías públicas deberán tener ochavas de acuerdo a lo dispuesto en los artículos precedentes. Los edificios la tendrán por lo menos en la planta baja y siempre que su altura sobre el nivel de la acera no sea inferior a 2,75 m.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/79447",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "OM de 22.06.1931",
+                                              "url":  "https://normativa.montevideo.gub.uy/content/om-de-22061931-3",
+                                              "referencia":  "art. 4",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_81514",
+                          "node_id":  "81514",
+                          "numero":  "D.3190",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Las esquinas de los edificios existentes, deberán sustituirse en la planta baja por la ochava obligatoria, cuando se trate de realizar obras en la zona afectada por ella y que obliguen a modificar la disposición o naturaleza actual de cualquiera de los elementos constructivos estructurales: muros, pilares, pisos, techos, etc. Solo se permitirá, sin exigir el ochavado, la ejecución de reparaciones de poca importancia, que no modifiquen el valor y la solidez del edificio, como el cambio de revoque, la pintura, la modificación de los cierres de los vanos y otras obras similares.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/81514",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "OM de 22.06.1931",
+                                              "url":  "https://normativa.montevideo.gub.uy/content/om-de-22061931-3",
+                                              "referencia":  "art. 5",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_81847",
+                          "node_id":  "81847",
+                          "numero":  "D.3191",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Cuando sin el permiso correspondiente, se efectuaran obras de construcción o de reparación de un edificio o de un cerco, sin ajustarse a lo establecido en los artículos precedentes, el propietario deberá hacer demoler la parte nueva indebidamente levantada o formar la ochava en la planta baja si se tratara de reparaciones que por su naturaleza traen aparejadas la obligación del ochavado, sin perjuicio de la sanción que corresponda, tanto al propietario como al director de los trabajos si lo hubiera.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/81847",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "OM de 22.06.1931",
+                                              "url":  "https://normativa.montevideo.gub.uy/content/om-de-22061931-3",
+                                              "referencia":  "art. 7",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_79452",
+                          "node_id":  "79452",
+                          "numero":  "D.3192",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Cuando se proyecte subsuelo en la zona afectada por la ochava deberá disponerse la parte superior de su cubierta a cuarenta centímetros como mínimo por debajo del nivel de la acera, prohibiéndose la colocación de patines de iluminación.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/79452",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "Res.IMM 27.857 de 26.03.1957",
+                                              "url":  "https://normativa.montevideo.gub.uy/node/77862",
+                                              "referencia":  "num. 2",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      },
+                      {
+                          "id":  "articulo_81848",
+                          "node_id":  "81848",
+                          "numero":  "D.3193",
+                          "estado":  "vigente",
+                          "titulo":  null,
+                          "texto":  "Se establece: \na) que en el caso que las alineaciones formen un ángulo agudo, la ochava reglamentaria será la que resulta de tomar tres metros cincuenta y tres centímetros sobre ambas alineaciones a partir del vértice y unir los puntos así determinados por medio de una recta; \nb) que cuando las alineaciones formen ángulos obtusos iguales o mayores que ciento treinta y cinco grados no se exigirá la construcción de la ochava.",
+                          "url":  "https://normativa.montevideo.gub.uy/articulo/81848",
+                          "fuente_armado":  "https://normativa.montevideo.gub.uy/armado/82663",
+                          "jerarquia":  {
+                                            "volumen":  "Volumen XV Planeamiento de la Edificación",
+                                            "parte":  "Parte Legislativa",
+                                            "libro":  "Libro XV Planeamiento de la Edificación",
+                                            "titulo":  "Título I Normas generales para proyecto",
+                                            "capitulo":  "Capítulo I De las ochavas",
+                                            "seccion":  null
+                                        },
+                          "fuentes":  [
+                                          {
+                                              "nombre":  "Res.IMM 27.857 de 26.03.1957",
+                                              "url":  "https://normativa.montevideo.gub.uy/node/77862",
+                                              "referencia":  "num. 3",
+                                              "observaciones":  ""
+                                          }
+                                      ],
+                          "fecha_consulta":  "2026-06-24"
+                      }
+                  ]
+}
