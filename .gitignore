@@ -34,7 +34,11 @@ vector_db/
 **/documentos_terminales/*
 **/AGENTS.md
 **/guia_rapida_terminal.md
-**/versiones
 **/guia_rapida_git.md
-**/documentos
-**/index
+
+**/versiones/*
+!**/versiones/.gitkeep
+**/documentos/*
+!**/documentos/.gitkeep
+**/index/*
+!**/index/.gitkeep
