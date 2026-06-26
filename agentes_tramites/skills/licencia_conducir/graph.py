@@ -7,12 +7,18 @@ from skills.licencia_conducir.document_qa import (
     generate_initial_summary,
 )
 from skills.licencia_conducir.matcher import (
+    category_group,
     extract_fields,
     load_terminal_document,
     load_terminal_document_by_name,
     match_leaf,
     normalize_fields,
 )
+from utils.text import normalize_text
+
+
+YES_WORDS = {"si", "sÃ­", "correcto", "afirmativo", "dale", "ok"}
+NO_WORDS = {"no", "negativo", "incorrecto"}
 
 
 class LicenseGraphState(TypedDict, total=False):
@@ -31,7 +37,11 @@ class LicenseGraphState(TypedDict, total=False):
 
 def phase_node(state: LicenseGraphState) -> LicenseGraphState:
     phase = state.get("current_fields", {}).get("phase")
-    return {"route": "document_qa" if phase == "document_qa" else "collect"}
+    if phase == "document_qa":
+        return {"route": "document_qa"}
+    if phase == "case_confirmation":
+        return {"route": "case_confirmation"}
+    return {"route": "collect"}
 
 
 def route_after_phase(state: LicenseGraphState) -> str:
@@ -60,10 +70,23 @@ def decide_node(state: LicenseGraphState) -> LicenseGraphState:
         }
 
     if result.status == "matched" and result.leaf is not None:
+        question = build_case_confirmation_question(
+            state["fields"],
+            result.leaf["titulo"],
+        )
         return {
-            "route": "terminal",
+            "route": "confirm_case",
+            "status": "need_input",
+            "question": question,
+            "answer": None,
             "terminal_leaf_id": result.leaf["id"],
             "terminal_document": result.leaf["archivo_md"],
+            "state_updates": {
+                **state.get("state_updates", {}),
+                "phase": "case_confirmation",
+                "pending_terminal_leaf_id": result.leaf["id"],
+                "pending_terminal_document": result.leaf["archivo_md"],
+            },
         }
 
     return {
@@ -108,6 +131,69 @@ def terminal_node(state: LicenseGraphState) -> LicenseGraphState:
     }
 
 
+def confirm_case_node(state: LicenseGraphState) -> LicenseGraphState:
+    current_fields = state.get("current_fields", {})
+    if current_fields.get("phase") != "case_confirmation":
+        return {
+            "status": state.get("status", "need_input"),
+            "question": state.get("question"),
+            "answer": state.get("answer"),
+            "terminal_leaf_id": state.get("terminal_leaf_id"),
+            "terminal_document": state.get("terminal_document"),
+            "state_updates": state.get("state_updates", {}),
+        }
+
+    confirmation = extract_confirmation(state.get("text", ""))
+
+    if confirmation is True:
+        filename = current_fields.get("pending_terminal_document")
+        leaf_id = current_fields.get("pending_terminal_leaf_id")
+        if not isinstance(filename, str) or not isinstance(leaf_id, str):
+            return {
+                "status": "final",
+                "question": None,
+                "answer": (
+                    "La sesiÃ³n perdiÃ³ el caso pendiente de confirmaciÃ³n. "
+                    "IniciÃ¡ una nueva consulta."
+                ),
+            }
+
+        markdown = load_terminal_document_by_name(filename)
+        summary = generate_initial_summary(markdown)
+        return {
+            "status": "document_qa",
+            "question": None,
+            "answer": summary,
+            "terminal_leaf_id": leaf_id,
+            "terminal_document": filename,
+            "state_updates": {
+                "phase": "document_qa",
+                "terminal_leaf_id": leaf_id,
+                "terminal_document": filename,
+            },
+        }
+
+    if confirmation is False:
+        return {
+            "status": "need_input",
+            "question": (
+                "Entendido. Indicame quÃ© dato querÃ©s corregir: trÃ¡mite, "
+                "categorÃ­a, edad, patologÃ­as o vigencia de la licencia."
+            ),
+            "answer": None,
+            "state_updates": {
+                "phase": "collect",
+            },
+        }
+
+    return {
+        "status": "need_input",
+        "question": "Necesito que confirmes si el caso es correcto. RespondÃ© sÃ­ o no.",
+        "answer": None,
+        "state_updates": {},
+    }
+
+
 def document_qa_node(state: LicenseGraphState) -> LicenseGraphState:
     current_fields = state.get("current_fields", {})
     filename = current_fields.get("terminal_document")
@@ -142,6 +228,65 @@ def route_after_decision(state: LicenseGraphState) -> str:
     return state["route"]
 
 
+def extract_confirmation(text: str) -> bool | None:
+    normalized = normalize_text(text)
+    if normalized in YES_WORDS:
+        return True
+    if normalized in NO_WORDS:
+        return False
+    return None
+
+
+def build_case_confirmation_question(
+    fields: dict[str, object],
+    leaf_title: str,
+) -> str:
+    lines = [
+        "Antes de darte los requisitos, confirmo el caso:",
+        "",
+        f"- Caso identificado: {leaf_title}.",
+    ]
+
+    tramite = format_tramite(fields.get("tramite"))
+    if tramite:
+        lines.append(f"- TrÃ¡mite: {tramite}.")
+
+    categoria = fields.get("categoria")
+    if isinstance(categoria, str):
+        group = category_group(categoria)
+        if group:
+            lines.append(f"- CategorÃ­a: {categoria} ({group}).")
+        else:
+            lines.append(f"- CategorÃ­a: {categoria}.")
+
+    edad = fields.get("edad")
+    if isinstance(edad, int):
+        lines.append(f"- Edad: {edad} aÃ±os.")
+
+    if "patologias" in fields:
+        value = "sÃ­" if fields["patologias"] is True else "no"
+        lines.append(f"- PatologÃ­as o restricciones mÃ©dicas: {value}.")
+
+    if "licencia_vigente" in fields:
+        value = "sÃ­" if fields["licencia_vigente"] is True else "no"
+        lines.append(f"- Licencia vigente: {value}.")
+
+    lines.extend(["", "Â¿Es correcto?"])
+    return "\n".join(lines)
+
+
+def format_tramite(value: object) -> str | None:
+    labels = {
+        "primera_vez": "primera vez",
+        "renovacion": "renovaciÃ³n",
+        "duplicado": "duplicado",
+        "homologacion": "homologaciÃ³n",
+    }
+    if isinstance(value, str):
+        return labels.get(value, value)
+    return None
+
+
 def build_graph():
     builder = StateGraph(LicenseGraphState)
     builder.add_node("phase", phase_node)
@@ -149,6 +294,7 @@ def build_graph():
     builder.add_node("decide", decide_node)
     builder.add_node("ask", ask_node)
     builder.add_node("terminal", terminal_node)
+    builder.add_node("confirm_case", confirm_case_node)
     builder.add_node("document_qa", document_qa_node)
     builder.add_node("unsupported", unsupported_node)
 
@@ -158,6 +304,7 @@ def build_graph():
         route_after_phase,
         {
             "collect": "extract",
+            "case_confirmation": "confirm_case",
             "document_qa": "document_qa",
         },
     )
@@ -167,11 +314,13 @@ def build_graph():
         route_after_decision,
         {
             "ask": "ask",
+            "confirm_case": "confirm_case",
             "terminal": "terminal",
             "unsupported": "unsupported",
         },
     )
     builder.add_edge("ask", END)
+    builder.add_edge("confirm_case", END)
     builder.add_edge("terminal", END)
     builder.add_edge("document_qa", END)
     builder.add_edge("unsupported", END)

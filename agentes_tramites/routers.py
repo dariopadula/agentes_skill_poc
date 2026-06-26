@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from llm_client import (
     build_llm_client,
@@ -23,6 +23,8 @@ class RouteDecision:
     skill: str | None
     confidence: float
     extracted_fields: dict[str, object] = field(default_factory=dict)
+    needs_confirmation: bool = False
+    reason: str | None = None
 
 
 class Router(Protocol):
@@ -58,7 +60,42 @@ class KeywordRouter:
 
         match_count, selected_skill = max(candidates)
         confidence = min(0.60 + 0.10 * match_count, 0.95)
-        return RouteDecision(skill=selected_skill, confidence=confidence)
+        needs_confirmation = self._needs_confirmation(
+            selected_skill,
+            normalized,
+            match_count,
+        )
+        reason = None
+        if needs_confirmation:
+            reason = (
+                "La consulta coincide con una skill, pero no contiene datos "
+                "suficientes para activarla sin confirmar."
+            )
+        return RouteDecision(
+            skill=selected_skill,
+            confidence=confidence,
+            needs_confirmation=needs_confirmation,
+            reason=reason,
+        )
+
+    def _needs_confirmation(
+        self,
+        skill_name: str,
+        normalized_text: str,
+        match_count: int,
+    ) -> bool:
+        if skill_name != "licencia_conducir":
+            return False
+
+        mentions_license_context = (
+            "licencia" in normalized_text
+            or "conducir" in normalized_text
+            or "manejar" in normalized_text
+        )
+        if mentions_license_context:
+            return False
+
+        return "libreta" in normalized_text and match_count <= 2
 
 
 class ExtractedFields(BaseModel):
@@ -93,7 +130,17 @@ class LLMRouteResult(BaseModel):
 
     skill: str
     confidence: float = Field(ge=0.0, le=1.0)
+    needs_confirmation: bool
+    reason: str | None
     extracted_fields: ExtractedFields
+
+    @model_validator(mode="before")
+    @classmethod
+    def add_confirmation_defaults(cls, data: object) -> object:
+        if isinstance(data, dict):
+            data.setdefault("needs_confirmation", False)
+            data.setdefault("reason", None)
+        return data
 
 
 class LLMRouter:
@@ -156,6 +203,8 @@ class LLMRouter:
             skill=None if parsed.skill == "unknown" else parsed.skill,
             confidence=parsed.confidence,
             extracted_fields=parsed.extracted_fields.model_dump(exclude_none=True),
+            needs_confirmation=parsed.needs_confirmation,
+            reason=parsed.reason,
         )
 
 

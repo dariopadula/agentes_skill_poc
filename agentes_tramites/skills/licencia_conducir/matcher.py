@@ -90,10 +90,8 @@ def extract_fields(text: str, current_fields: dict[str, object]) -> dict[str, ob
         for term in (
             "primera vez",
             "primera licencia",
-            "nueva licencia",
-            "sacar la libreta",
-            "sacar licencia",
-            "obtener licencia",
+            "nunca tuve licencia",
+            "nunca tuve libreta",
         )
     ):
         updates["tramite"] = "primera_vez"

@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 from skills.licencia_conducir.handler import handle
 from skills.licencia_conducir.matcher import (
+    extract_fields,
     match_leaf,
     validate_terminal_assets,
 )
@@ -76,6 +77,16 @@ class LicenseMatcherTests(unittest.TestCase):
         )
         self.assertEqual(result.status, "unsupported")
 
+    def test_sacar_licencia_does_not_imply_first_time(self) -> None:
+        updates = extract_fields("quiero sacar la licencia de conducir", {})
+
+        self.assertNotIn("tramite", updates)
+
+    def test_explicit_first_time_is_detected(self) -> None:
+        updates = extract_fields("quiero licencia por primera vez", {})
+
+        self.assertEqual(updates["tramite"], "primera_vez")
+
 
 class LicenseGraphTests(unittest.TestCase):
     @patch(
@@ -90,7 +101,7 @@ class LicenseGraphTests(unittest.TestCase):
             ("quiero renovar la libreta", "need_input"),
             ("A", "need_input"),
             ("35", "need_input"),
-            ("no tengo", "document_qa"),
+            ("no tengo", "need_input"),
         ):
             history.append({"role": "user", "content": text})
             result = handle(text, fields, history)
@@ -103,11 +114,22 @@ class LicenseGraphTests(unittest.TestCase):
                 }
             )
 
+        self.assertIn("Antes de darte los requisitos", result["question"])
+        self.assertEqual(fields["phase"], "case_confirmation")
+        self.assertEqual(
+            fields["pending_terminal_leaf_id"],
+            "renovacion_a_g1_g2_hasta_74_sin_patologias",
+        )
+
+        history.append({"role": "user", "content": "si"})
+        result = handle("si", fields, history)
+        self.assertEqual(result["status"], "document_qa")
         self.assertEqual(
             result["terminal_leaf_id"],
             "renovacion_a_g1_g2_hasta_74_sin_patologias",
         )
         self.assertEqual(result["answer"], "Resumen inicial del trámite.")
+        fields.update(result["state_updates"])
         self.assertEqual(fields["phase"], "document_qa")
 
     @patch(
@@ -119,10 +141,14 @@ class LicenseGraphTests(unittest.TestCase):
         first = handle("perdí mi licencia", fields)
         fields.update(first["state_updates"])
         second = handle("sí", fields)
+        fields.update(second["state_updates"])
+        third = handle("si", fields)
 
         self.assertEqual(first["status"], "need_input")
-        self.assertEqual(second["status"], "document_qa")
-        self.assertEqual(second["terminal_leaf_id"], "duplicado_licencia")
+        self.assertEqual(second["status"], "need_input")
+        self.assertIn("Antes de darte los requisitos", second["question"])
+        self.assertEqual(third["status"], "document_qa")
+        self.assertEqual(third["terminal_leaf_id"], "duplicado_licencia")
 
     @patch(
         "skills.licencia_conducir.graph.answer_document_question",
