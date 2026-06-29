@@ -44,3 +44,4 @@ vector_db/
 !**/documentos/.gitkeep
 **/index/*
 !**/index/.gitkeep
+**/material_util
