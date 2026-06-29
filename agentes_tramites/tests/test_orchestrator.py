@@ -95,6 +95,58 @@ class OrchestratorConfirmationTests(unittest.TestCase):
         self.assertIn("tr", result["question"].lower())
         self.assertNotIn("tramite", state.fields)
 
+    def test_router_category_inference_from_vehicle_is_removed(self) -> None:
+        router = StaticRouter(
+            RouteDecision(
+                skill="licencia_conducir",
+                confidence=0.9,
+                extracted_fields={
+                    "categoria": "B",
+                    "grupo_categoria": "profesional",
+                    "edad": 30,
+                },
+                needs_confirmation=False,
+            )
+        )
+        orchestrator = Orchestrator(build_default_registry(), router=router)
+        state = ConversationState()
+
+        result = orchestrator.handle(
+            "quiero sacar la libreta de conducir para autos, tengo 30 años",
+            state,
+        )
+
+        self.assertEqual(result["status"], "need_input")
+        self.assertNotIn("categoria", state.fields)
+        self.assertNotIn("grupo_categoria", state.fields)
+        self.assertEqual(state.fields["edad"], 30)
+
+    def test_router_explicit_category_is_kept(self) -> None:
+        router = StaticRouter(
+            RouteDecision(
+                skill="licencia_conducir",
+                confidence=0.9,
+                extracted_fields={
+                    "categoria": "B",
+                    "grupo_categoria": "profesional",
+                    "edad": 30,
+                },
+                needs_confirmation=False,
+            )
+        )
+        orchestrator = Orchestrator(build_default_registry(), router=router)
+        state = ConversationState()
+
+        result = orchestrator.handle(
+            "quiero renovar licencia categoria B, tengo 30 años",
+            state,
+        )
+
+        self.assertEqual(result["status"], "need_input")
+        self.assertEqual(state.fields["categoria"], "B")
+        self.assertEqual(state.fields["grupo_categoria"], "profesional")
+        self.assertEqual(state.fields["edad"], 30)
+
     def test_reset_clears_pending_skill_text(self) -> None:
         state = ConversationState()
         state.pending_skill = "licencia_conducir"
