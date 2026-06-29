@@ -36,8 +36,9 @@ QUESTIONS = {
     ),
     "edad": "¿Qué edad tenés?",
     "patologias": (
-        "¿Tenés alguna patología o restricción médica registrada? "
-        "Respondé sí o no."
+        "¿Tenés alguna patología, restricción médica o medicación permanente? "
+        "Respondé sí o no. Si no sabés si tu caso cuenta, contame brevemente "
+        "qué condición o medicación tenés."
     ),
     "licencia_vigente": "¿La licencia está vigente? Respondé sí o no.",
 }
@@ -138,20 +139,17 @@ def extract_fields(text: str, current_fields: dict[str, object]) -> dict[str, ob
     if any(
         term in normalized
         for term in (
-            "tengo patologia",
-            "tengo una patologia",
-            "restriccion medica",
-            "diabetes",
-            "problema visual",
-            "problema auditivo",
+            "no tengo patologia",
+            "no tengo patologias",
+            "no tengo restriccion",
+            "no tengo restricciones",
+            "sin patologias",
+            "sin restricciones medicas",
         )
     ):
-        updates["patologias"] = True
-    elif any(
-        term in normalized
-        for term in ("sin patologias", "sin restricciones medicas")
-    ):
         updates["patologias"] = False
+    elif any(term in normalized for term in ("tengo patologia", "tengo una patologia")):
+        updates["patologias"] = True
 
     if any(term in normalized for term in ("esta vigente", "sigue vigente")):
         updates["licencia_vigente"] = True

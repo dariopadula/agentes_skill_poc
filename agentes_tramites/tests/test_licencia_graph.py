@@ -8,6 +8,10 @@ from skills.licencia_conducir.matcher import (
     match_leaf,
     validate_terminal_assets,
 )
+from skills.licencia_conducir.pathology_inference import (
+    DetectedCondition,
+    PathologyInference,
+)
 
 
 class LicenseMatcherTests(unittest.TestCase):
@@ -87,6 +91,18 @@ class LicenseMatcherTests(unittest.TestCase):
         updates = extract_fields("quiero licencia por primera vez", {})
 
         self.assertEqual(updates["tramite"], "primera_vez")
+
+    def test_negated_pathology_phrase_is_false(self) -> None:
+        updates = extract_fields(
+            "entonces no tengo patologia, si no esta en la lista",
+            {
+                "tramite": "renovacion",
+                "categoria": "A",
+                "edad": 30,
+            },
+        )
+
+        self.assertEqual(updates["patologias"], False)
 
 
 class LicenseGraphTests(unittest.TestCase):
@@ -185,6 +201,181 @@ class LicenseGraphTests(unittest.TestCase):
         self.assertIn("moto", result["question"])
         self.assertEqual(result["state_updates"]["pending_field"], "categoria")
         self.assertNotIn("categoria", result["state_updates"])
+
+    def test_explicit_yes_pathology_does_not_use_llm_inference(self) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "categoria": "A",
+            "edad": 40,
+            "pending_field": "patologias",
+        }
+
+        with patch("skills.licencia_conducir.graph.infer_pathology") as inference:
+            result = handle("si", fields)
+
+        inference.assert_not_called()
+        self.assertEqual(result["status"], "need_input")
+        self.assertEqual(result["state_updates"]["patologias"], True)
+        self.assertEqual(result["state_updates"]["phase"], "case_confirmation")
+
+    def test_explicit_no_pathology_does_not_use_llm_inference(self) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "categoria": "A",
+            "edad": 40,
+            "pending_field": "patologias",
+        }
+
+        with patch("skills.licencia_conducir.graph.infer_pathology") as inference:
+            result = handle("no", fields)
+
+        inference.assert_not_called()
+        self.assertEqual(result["status"], "need_input")
+        self.assertEqual(result["state_updates"]["patologias"], False)
+        self.assertEqual(result["state_updates"]["phase"], "case_confirmation")
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_pathology",
+        return_value=PathologyInference(
+            status="detected",
+            patologias_inferidas=True,
+            codigos_patologias_inferidos=[2, 15],
+            condiciones_detectadas=[
+                DetectedCondition(
+                    codigo=2,
+                    nombre="Afecciones cardiovasculares",
+                    texto_usuario="soy hipertenso",
+                ),
+                DetectedCondition(
+                    codigo=15,
+                    nombre="Lentes de contacto",
+                    texto_usuario="uso lentes de contacto",
+                ),
+            ],
+            confidence="alta",
+            reason="el usuario menciono hipertension y lentes de contacto",
+        ),
+    )
+    def test_natural_pathology_description_requires_confirmation(self, inference) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "categoria": "A",
+            "edad": 40,
+            "pending_field": "patologias",
+        }
+
+        result = handle("soy hipertenso y uso lentes de contacto", fields)
+        fields.update(result["state_updates"])
+
+        inference.assert_called_once_with("soy hipertenso y uso lentes de contacto")
+        self.assertEqual(result["status"], "need_input")
+        self.assertIn("Afecciones cardiovasculares", result["question"])
+        self.assertIn("Lentes de contacto", result["question"])
+        self.assertIn("registrar como si", result["question"])
+        self.assertEqual(fields["phase"], "pathology_inference_confirmation")
+        self.assertNotIn("patologias", fields)
+
+        confirmation = handle("si", fields)
+
+        self.assertEqual(confirmation["status"], "need_input")
+        self.assertEqual(confirmation["state_updates"]["patologias"], True)
+        self.assertEqual(confirmation["state_updates"]["codigos_patologias"], [2, 15])
+        self.assertEqual(confirmation["state_updates"]["phase"], "case_confirmation")
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_pathology",
+        return_value=PathologyInference(
+            status="detected",
+            patologias_inferidas=True,
+            codigos_patologias_inferidos=[3],
+            condiciones_detectadas=[
+                DetectedCondition(
+                    codigo=3,
+                    nombre="Diabetes",
+                    texto_usuario="tengo diabetes",
+                )
+            ],
+            confidence="alta",
+            reason="el usuario menciono diabetes",
+        ),
+    )
+    def test_rejected_pathology_inference_asks_binary_or_description(self, _inference) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "categoria": "A",
+            "edad": 40,
+            "pending_field": "patologias",
+        }
+
+        first = handle("tengo diabetes", fields)
+        fields.update(first["state_updates"])
+        second = handle("no", fields)
+
+        self.assertEqual(second["status"], "need_input")
+        self.assertIn("respondeme si tenes", second["question"])
+        self.assertEqual(second["state_updates"]["phase"], "collect")
+        self.assertEqual(second["state_updates"]["pending_field"], "patologias")
+        self.assertEqual(second["state_updates"]["patologias_inferidas"], "")
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_pathology",
+        return_value=PathologyInference(
+            status="need_input",
+            confidence="media",
+            question=(
+                "¿La medicacion permanente es por presion, diabetes, salud "
+                "mental, colesterol u otra condicion?"
+            ),
+            reason="El usuario menciono medicacion permanente.",
+        ),
+    )
+    def test_ambiguous_pathology_description_asks_llm_question(self, _inference) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "categoria": "A",
+            "edad": 40,
+            "pending_field": "patologias",
+        }
+
+        result = handle("tomo medicacion permanente", fields)
+
+        self.assertEqual(result["status"], "need_input")
+        self.assertIn("medicacion permanente", result["question"])
+        self.assertEqual(result["state_updates"]["pending_field"], "patologias")
+        self.assertNotIn("patologias", result["state_updates"])
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_pathology",
+        return_value=PathologyInference(
+            status="not_detected",
+            patologias_inferidas=False,
+            codigos_patologias_inferidos=[],
+            condiciones_detectadas=[],
+            confidence="media",
+            reason="Dolor de cabeza no figura en la guia.",
+        ),
+    )
+    def test_not_detected_pathology_does_not_register_and_allows_no(self, _inference) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "categoria": "A",
+            "edad": 30,
+            "pending_field": "patologias",
+        }
+
+        first = handle("solo tengo dolor de cabeza", fields)
+        fields.update(first["state_updates"])
+
+        self.assertEqual(first["status"], "need_input")
+        self.assertIn("no lo voy a registrar como patologia", first["question"])
+        self.assertEqual(fields["pending_field"], "patologias")
+        self.assertNotIn("patologias", fields)
+
+        second = handle("entonces no tengo patologia, si no esta en la lista", fields)
+
+        self.assertEqual(second["status"], "need_input")
+        self.assertEqual(second["state_updates"]["patologias"], False)
+        self.assertEqual(second["state_updates"]["phase"], "case_confirmation")
 
     @patch(
         "skills.licencia_conducir.graph.generate_initial_summary",

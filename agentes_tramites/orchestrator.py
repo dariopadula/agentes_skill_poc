@@ -6,6 +6,7 @@ from utils.text import normalize_text
 
 YES_WORDS = {"si", "sÃ­", "correcto", "afirmativo", "dale", "ok"}
 NO_WORDS = {"no", "negativo", "incorrecto"}
+VALID_CATEGORIES = {"a", "g1", "g2", "b", "c", "d", "e", "f", "h", "g3"}
 
 
 class Orchestrator:
@@ -134,6 +135,16 @@ def _normalize_decision(text: str, decision: RouteDecision) -> RouteDecision:
     if _is_weak_first_time_inference(normalized, extracted_fields):
         extracted_fields.pop("tramite", None)
 
+    if "categoria" in extracted_fields and not _has_explicit_category(normalized):
+        extracted_fields.pop("categoria", None)
+        extracted_fields.pop("grupo_categoria", None)
+    elif (
+        "grupo_categoria" in extracted_fields
+        and not _has_explicit_category(normalized)
+        and not _has_explicit_category_group(normalized)
+    ):
+        extracted_fields.pop("grupo_categoria", None)
+
     needs_confirmation = decision.needs_confirmation
     reason = decision.reason
     if _has_clear_license_context(normalized):
@@ -167,6 +178,21 @@ def _has_ambiguous_license_context(normalized_text: str) -> bool:
     return "libreta" in normalized_text and not _has_clear_license_context(
         normalized_text
     )
+
+
+def _has_explicit_category(normalized_text: str) -> bool:
+    words = normalized_text.split()
+    for index, word in enumerate(words):
+        if word in VALID_CATEGORIES:
+            if word == "a":
+                previous = words[index - 1] if index > 0 else ""
+                return previous in {"categoria", "licencia"}
+            return True
+    return False
+
+
+def _has_explicit_category_group(normalized_text: str) -> bool:
+    return "profesional" in normalized_text or "amateur" in normalized_text
 
 
 def _is_weak_first_time_inference(
