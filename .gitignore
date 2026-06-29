@@ -33,6 +33,8 @@ vector_db/
 # Otros insumos
 **/documentos_terminales/*
 **/AGENTS.md
+**/TAREAS.md
+**/00_prueba_todos_los_nodos.json
 **/guia_rapida_terminal.md
 **/guia_rapida_git.md
 
