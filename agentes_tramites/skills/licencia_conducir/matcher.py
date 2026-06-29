@@ -29,8 +29,10 @@ QUESTIONS = {
         "u homologación?"
     ),
     "categoria": (
-        "¿Qué categoría de licencia corresponde? "
-        "Puede ser A, G1, G2, B, C, D, E, F, H o G3."
+        "¿Sabés qué categoría de licencia querés tramitar o renovar? "
+        "Podés responder A, G1, G2, B, C, D, E, F, H o G3. "
+        "Si no la sabés, contame qué vehículo querés manejar, por ejemplo "
+        "auto, moto, taxi, camión, ómnibus o maquinaria."
     ),
     "edad": "¿Qué edad tenés?",
     "patologias": (
@@ -116,9 +118,6 @@ def extract_fields(text: str, current_fields: dict[str, object]) -> dict[str, ob
         or normalized == "a"
     ):
         updates["categoria"] = "A"
-    elif any(term in normalized for term in ("auto", "camioneta")):
-        updates["categoria"] = "A"
-
     if "profesional" in normalized and "categoria" not in updates:
         updates["grupo_categoria"] = "profesional"
 

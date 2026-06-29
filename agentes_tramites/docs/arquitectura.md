@@ -45,14 +45,15 @@ flowchart TD
     QA --> RESP1[Resumen y conversación]
 
     PC --> YAML2[data.yaml básico]
-    PC -. evolución .-> RAG[Módulo RAG]
-    RAG -.-> VDB[(Base vectorial)]
-    RAG -.-> GEN[LLM generador]
-    PC --> RESP2[Respuesta con fuentes]
+    PC --> RET[Retriever local]
+    RET --> IDX[Índice JSONL con embeddings]
+    PC --> GEN[LLM generador con fallback]
+    GEN --> RESP2[Respuesta con fuentes]
 ```
 
-Las líneas continuas representan componentes actuales. Las líneas punteadas
-representan la evolución propuesta para permiso de construcción.
+Las líneas continuas representan componentes actuales. En permiso de
+construcción, el RAG es todavía una prueba acotada a una muestra de ochavas,
+no una cobertura completa del trámite.
 
 ## 3. Responsabilidades principales
 
@@ -262,17 +263,28 @@ RAG.
 
 ### Estado actual
 
-La implementación actual sólo verifica que el router pueda distinguir esta
-skill de licencia de conducir.
+La implementación actual ya no es sólo un placeholder de enrutamiento. Es una
+prueba documental acotada a consultas sobre ochavas, basada en una muestra del
+Volumen XV del Digesto Departamental.
 
 ```text
 skills/permiso_construccion/
 ├── skill.md
-├── handler.py     # Respuesta mínima de prueba
-└── data.yaml      # Mensaje placeholder y advertencia
+├── handler.py                     # Coordina conversación y retrieval
+├── retriever.py                   # Recupera artículos por embeddings
+├── rag_answer.py                  # Genera respuesta con fuentes y fallback
+├── data.yaml                      # Metadatos y mensajes base
+├── documentos/
+│   └── articulos_muestra_ochavas.json
+├── index/
+│   └── ochavas_embeddings.jsonl
+└── ingesta/
+    └── build_embeddings_index.py
 ```
 
-Todavía no contiene normativa ni requisitos reales.
+La cobertura sigue siendo limitada: sólo contiene una muestra exploratoria de
+ochavas. No debe interpretarse como una skill completa de permisos de
+construcción.
 
 ### Arquitectura objetivo
 
@@ -416,13 +428,13 @@ flowchart LR
 
 | Aspecto | Licencia de conducir | Permiso de construcción |
 |---|---|---|
-| Estado actual | Funcional en la PoC | Placeholder funcional |
-| Fuente principal | Hojas JSON + Markdown | Futura combinación YAML + documentos |
-| Conversación | Pregunta campos faltantes | Pendiente de diseñar |
-| RAG | No necesario inicialmente | Recomendado para normativa |
-| Base vectorial | No necesaria | CrateDB, pgvector u otra |
-| Uso de LLM interno | Opcional | Útil para sintetizar evidencia |
-| Respuesta | Requisitos y pasos estructurados | Respuesta contextual con citas |
+| Estado actual | Funcional en la PoC | RAG local experimental acotado a ochavas |
+| Fuente principal | Hojas JSON + Markdown | Muestra JSON de artículos + índice JSONL |
+| Conversación | Pregunta campos faltantes | Pide aclaración en consultas generales sobre ochavas |
+| RAG | No necesario inicialmente | Implementado como prueba local sin base vectorial externa |
+| Base vectorial | No necesaria | Archivo JSONL con embeddings |
+| Uso de LLM interno | Opcional | Genera respuesta con fuentes y fallback a evidencia |
+| Respuesta | Requisitos y pasos estructurados | Respuesta contextual sobre la muestra disponible |
 
 ## 10. Trazabilidad y control
 
@@ -464,14 +476,18 @@ Actualmente están implementados:
 - Estado conversacional en memoria.
 - Skill funcional de licencia de conducir.
 - Grafo LangGraph y ocho documentos terminales para licencia.
-- Skill placeholder de permiso de construcción.
+- Skill experimental de permiso de construcción acotada a ochavas.
+- Muestra documental de artículos de ochavas.
+- Índice local JSONL con embeddings para esa muestra.
+- Retriever por similitud coseno.
+- Generación RAG con fuentes y fallback a evidencia recuperada.
 
 Todavía no están implementados:
 
 - Router con un modelo local.
-- RAG.
-- Ingesta documental.
-- Embeddings.
-- Base vectorial.
-- Generación de respuestas normativas con citas.
+- RAG completo para permiso de construcción.
+- Ingesta documental robusta y repetible desde fuentes oficiales.
+- Base vectorial externa o persistencia especializada.
+- Cobertura documental amplia de normativa de construcción.
+- Validación exhaustiva de respuestas normativas con citas.
 - Integraciones con APIs oficiales.

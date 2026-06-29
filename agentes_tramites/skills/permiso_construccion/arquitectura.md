@@ -34,16 +34,21 @@ antes de generar una respuesta específica.
 
 ## 3. Estado actual
 
-Actualmente la skill funciona como placeholder:
+Actualmente la skill funciona como una prueba documental acotada:
 
 - El orquestador puede seleccionarla.
-- Devuelve una respuesta fija.
-- No consulta normativa real.
-- No implementa RAG.
-- No solicita datos adicionales.
+- Detecta consultas sobre ochavas.
+- Pide una aclaración cuando la consulta es demasiado general.
+- Recupera artículos desde un índice local JSONL con embeddings.
+- Genera una respuesta con fuentes mediante el modelo documental.
+- Si el LLM no está disponible, muestra la evidencia recuperada directamente.
+- Conserva contexto conversacional mínimo sobre el tema consultado.
 
 Como primera exploración documental se generó una muestra del Capítulo I "De
 las ochavas" del Volumen XV del Digesto Departamental.
+
+La skill sigue siendo experimental. La muestra no cubre todos los permisos de
+construcción ni toda la normativa de edificación.
 
 ## 4. Fuente exploratoria inicial
 
@@ -66,6 +71,12 @@ La muestra generada quedó en:
 
 ```text
 skills/permiso_construccion/documentos/articulos_muestra_ochavas.json
+```
+
+El índice local de embeddings generado para esa muestra quedó en:
+
+```text
+skills/permiso_construccion/index/ochavas_embeddings.jsonl
 ```
 
 ## 5. Estructura documental propuesta
@@ -135,7 +146,7 @@ skill debería preguntar antes de dar una respuesta normativa cerrada.
 
 ## 8. Estrategia RAG propuesta
 
-Para una primera PoC, la estrategia debería ser simple:
+Para una primera PoC, la estrategia implementada es simple:
 
 1. Ingestar una sección acotada.
 2. Guardar artículos normalizados en JSON.
@@ -146,9 +157,9 @@ Para una primera PoC, la estrategia debería ser simple:
 7. Si alcanza, responder sólo con los fragmentos recuperados.
 8. Citar artículos y URL.
 
-No se recomienda comenzar con una base vectorial compleja. Primero conviene
-validar si la recuperación trae evidencia útil y si las respuestas resultan
-controlables.
+No se comenzó con una base vectorial compleja. El objetivo actual es validar si
+la recuperación trae evidencia útil y si las respuestas resultan controlables
+antes de escalar a más normativa o infraestructura.
 
 ## 9. Evaluación de contexto
 
@@ -210,11 +221,16 @@ Si faltan datos para elegir entre escenarios normativos, debe pedirlos.
 ## 12. Límites actuales
 
 - La muestra contiene sólo un capítulo.
-- No existe aún índice vectorial.
-- No hay embeddings generados.
-- No hay retriever implementado.
-- No hay generación RAG conectada al handler.
+- El índice es un archivo JSONL local, no una base vectorial externa.
+- Los embeddings cubren sólo la muestra de ochavas.
+- El retriever usa similitud coseno simple.
+- La evaluación de suficiencia de contexto todavía combina reglas simples y
+  preguntas predefinidas.
+- La generación RAG depende del modelo documental configurado y conserva un
+  fallback a evidencia recuperada.
 - El scraping actual fue exploratorio y no un proceso de ingesta robusto.
+- No hay cobertura general de permisos de construcción, ubicación, obra nueva,
+  reforma, regularización, formularios ni agenda.
 
 ## 13. Evolución posible
 
@@ -224,8 +240,8 @@ Próximos pasos técnicos:
 - Implementar un scraper mantenible.
 - Evaluar incorporar `beautifulsoup4` para parseo HTML robusto.
 - Normalizar artículos y metadatos.
-- Crear un índice vectorial simple en archivos.
-- Implementar un retriever con similitud coseno.
-- Implementar evaluación de contexto antes de responder.
+- Ampliar o regenerar el índice local con más secciones normativas.
+- Ajustar umbrales de similitud y criterios de ausencia de evidencia.
+- Fortalecer la evaluación de contexto antes de responder.
 - Diseñar prompts que obliguen a responder con fuentes.
 - Agregar tests de recuperación y de ausencia de evidencia.

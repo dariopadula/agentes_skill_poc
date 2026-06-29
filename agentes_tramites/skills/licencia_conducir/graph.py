@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from skills.licencia_conducir.category_inference import infer_category
 from skills.licencia_conducir.document_qa import (
     answer_document_question,
     generate_initial_summary,
@@ -41,6 +42,8 @@ def phase_node(state: LicenseGraphState) -> LicenseGraphState:
         return {"route": "document_qa"}
     if phase == "case_confirmation":
         return {"route": "case_confirmation"}
+    if phase == "category_inference_confirmation":
+        return {"route": "category_inference_confirmation"}
     return {"route": "collect"}
 
 
@@ -51,6 +54,9 @@ def route_after_phase(state: LicenseGraphState) -> str:
 def extract_node(state: LicenseGraphState) -> LicenseGraphState:
     current_fields = state.get("current_fields", {})
     updates = extract_fields(state.get("text", ""), current_fields)
+    pending_field = current_fields.get("pending_field")
+    if pending_field in updates:
+        updates["pending_field"] = ""
     combined = normalize_fields({**current_fields, **updates})
     return {
         "fields": combined,
@@ -62,11 +68,51 @@ def decide_node(state: LicenseGraphState) -> LicenseGraphState:
     result = match_leaf(state["fields"])
 
     if result.status == "need_input":
+        if (
+            result.missing_field == "categoria"
+            and state.get("current_fields", {}).get("pending_field") == "categoria"
+        ):
+            inference = infer_category(state.get("text", ""))
+            if inference.status == "detected":
+                question = build_category_confirmation_question(inference)
+                return {
+                    "route": "confirm_category",
+                    "status": "need_input",
+                    "question": question,
+                    "answer": None,
+                    "state_updates": {
+                        **state.get("state_updates", {}),
+                        "phase": "category_inference_confirmation",
+                        "pending_field": "",
+                        "categoria_inferida": inference.categoria_inferida,
+                        "grupo_categoria_inferido": (
+                            inference.grupo_categoria_inferido
+                        ),
+                        "categoria_inferencia_confianza": inference.confidence,
+                        "categoria_inferencia_motivo": inference.reason,
+                    },
+                }
+
+            return {
+                "route": "ask",
+                "status": "need_input",
+                "question": inference.question or result.question,
+                "answer": None,
+                "state_updates": {
+                    **state.get("state_updates", {}),
+                    "pending_field": "categoria",
+                },
+            }
+
         return {
             "route": "ask",
             "status": "need_input",
             "question": result.question,
             "answer": None,
+            "state_updates": {
+                **state.get("state_updates", {}),
+                "pending_field": result.missing_field or "",
+            },
         }
 
     if result.status == "matched" and result.leaf is not None:
@@ -194,6 +240,116 @@ def confirm_case_node(state: LicenseGraphState) -> LicenseGraphState:
     }
 
 
+def confirm_category_node(state: LicenseGraphState) -> LicenseGraphState:
+    current_fields = state.get("current_fields", {})
+    if current_fields.get("phase") != "category_inference_confirmation":
+        return {
+            "status": state.get("status", "need_input"),
+            "question": state.get("question"),
+            "answer": state.get("answer"),
+            "terminal_leaf_id": state.get("terminal_leaf_id"),
+            "terminal_document": state.get("terminal_document"),
+            "state_updates": state.get("state_updates", {}),
+        }
+
+    confirmation = extract_confirmation(state.get("text", ""))
+
+    if confirmation is True:
+        category = current_fields.get("categoria_inferida")
+        group = current_fields.get("grupo_categoria_inferido")
+        if not isinstance(category, str) or not isinstance(group, str):
+            return {
+                "status": "need_input",
+                "question": (
+                    "La sesion perdio la categoria inferida. Decime la "
+                    "categoria A, G1, G2, B, C, D, E, F, H o G3, o describime "
+                    "el vehiculo."
+                ),
+                "answer": None,
+                "state_updates": clear_category_inference_updates(
+                    phase="collect",
+                    pending_field="categoria",
+                ),
+            }
+
+        promoted_fields = normalize_fields({**current_fields, "categoria": category})
+        result = match_leaf(promoted_fields)
+        updates = clear_category_inference_updates(
+            phase="collect",
+            pending_field=result.missing_field or "",
+        )
+        updates.update(
+            {
+                "categoria": category,
+                "grupo_categoria": group,
+            }
+        )
+
+        if result.status == "need_input":
+            return {
+                "status": "need_input",
+                "question": result.question,
+                "answer": None,
+                "state_updates": updates,
+            }
+
+        if result.status == "matched" and result.leaf is not None:
+            updates.update(
+                {
+                    "phase": "case_confirmation",
+                    "pending_terminal_leaf_id": result.leaf["id"],
+                    "pending_terminal_document": result.leaf["archivo_md"],
+                }
+            )
+            return {
+                "status": "need_input",
+                "question": build_case_confirmation_question(
+                    promoted_fields,
+                    result.leaf["titulo"],
+                ),
+                "answer": None,
+                "terminal_leaf_id": result.leaf["id"],
+                "terminal_document": result.leaf["archivo_md"],
+                "state_updates": updates,
+            }
+
+        return {
+            "status": "final",
+            "question": None,
+            "answer": (
+                f"{result.reason}\n\n"
+                "Esta primera version solo responde los casos representados "
+                "en las hojas terminales extraidas del insumo."
+            ),
+            "state_updates": updates,
+        }
+
+    if confirmation is False:
+        return {
+            "status": "need_input",
+            "question": (
+                "Entendido. Decime la categoria A, G1, G2, B, C, D, E, F, H "
+                "o G3, o describime con mas detalle el vehiculo que queres "
+                "manejar."
+            ),
+            "answer": None,
+            "state_updates": clear_category_inference_updates(
+                phase="collect",
+                pending_field="categoria",
+            ),
+        }
+
+    return {
+        "status": "need_input",
+        "question": (
+            "Necesito que confirmes si la categoria inferida es correcta. "
+            "Responde si o no."
+        ),
+        "answer": None,
+        "state_updates": {},
+    }
+
+
 def document_qa_node(state: LicenseGraphState) -> LicenseGraphState:
     current_fields = state.get("current_fields", {})
     filename = current_fields.get("terminal_document")
@@ -235,6 +391,29 @@ def extract_confirmation(text: str) -> bool | None:
     if normalized in NO_WORDS:
         return False
     return None
+
+
+def clear_category_inference_updates(
+    *,
+    phase: str,
+    pending_field: str,
+) -> dict[str, object]:
+    return {
+        "phase": phase,
+        "pending_field": pending_field,
+        "categoria_inferida": "",
+        "grupo_categoria_inferido": "",
+        "categoria_inferencia_confianza": "",
+        "categoria_inferencia_motivo": "",
+    }
+
+
+def build_category_confirmation_question(inference) -> str:
+    return (
+        f"Entendi que corresponde a la categoria "
+        f"{inference.categoria_inferida} ({inference.grupo_categoria_inferido}), "
+        f"porque {inference.reason}. ¿Es correcto?"
+    )
 
 
 def build_case_confirmation_question(
@@ -295,6 +474,7 @@ def build_graph():
     builder.add_node("ask", ask_node)
     builder.add_node("terminal", terminal_node)
     builder.add_node("confirm_case", confirm_case_node)
+    builder.add_node("confirm_category", confirm_category_node)
     builder.add_node("document_qa", document_qa_node)
     builder.add_node("unsupported", unsupported_node)
 
@@ -305,6 +485,7 @@ def build_graph():
         {
             "collect": "extract",
             "case_confirmation": "confirm_case",
+            "category_inference_confirmation": "confirm_category",
             "document_qa": "document_qa",
         },
     )
@@ -315,12 +496,14 @@ def build_graph():
         {
             "ask": "ask",
             "confirm_case": "confirm_case",
+            "confirm_category": "confirm_category",
             "terminal": "terminal",
             "unsupported": "unsupported",
         },
     )
     builder.add_edge("ask", END)
     builder.add_edge("confirm_case", END)
+    builder.add_edge("confirm_category", END)
     builder.add_edge("terminal", END)
     builder.add_edge("document_qa", END)
     builder.add_edge("unsupported", END)

@@ -47,7 +47,10 @@ información incluida es ilustrativa y debe validarse contra la fuente oficial.
   Markdown mediante OpenAI.
 - `skills/licencia_conducir/hojas_terminales.json`: condiciones de las hojas.
 - `skills/licencia_conducir/documentos_terminales/`: contenido Markdown final.
-- `skills/permiso_construccion/`: skill placeholder para probar el enrutamiento.
+- `skills/permiso_construccion/`: skill documental experimental, acotada a una
+  muestra de ochavas del Digesto Departamental. Incluye handler conversacional,
+  retriever por embeddings locales, generación RAG con LLM y fallback a
+  evidencia recuperada.
 - `utils/text.py`: normalización de texto compartida.
 
 ## Flujo
@@ -60,6 +63,15 @@ información incluida es ilustrativa y debe validarse contra la fuente oficial.
 5. Al completar los campos, el matcher elige una hoja y carga su Markdown.
 6. El LLM resume qué debe llevar el ciudadano y permite preguntas posteriores
    basadas exclusivamente en ese documento.
+
+Para `permiso_construccion`, el flujo actual es experimental y está restringido
+al tema ochavas:
+
+1. El handler detecta si la consulta corresponde a ochavas.
+2. Si la consulta es demasiado general, pide una aclaración del escenario.
+3. Recupera artículos desde un índice local JSONL con embeddings.
+4. Genera una respuesta con fuentes mediante el modelo documental.
+5. Si el LLM no está disponible, muestra la evidencia recuperada directamente.
 
 La sesión conserva el documento y los últimos mensajes durante esta fase:
 
@@ -139,6 +151,8 @@ No es necesario modificar el router ni `build_default_registry()`.
 ## Evolución futura
 
 - Generar el catálogo y el esquema del router LLM desde el registro de skills.
+- Consolidar la skill `permiso_construccion`, que hoy valida un RAG local
+  acotado a ochavas antes de escalar a más normativa.
 - Usar RAG para normativa extensa, cambiante o con excepciones.
 - Agregar una interfaz web con Streamlit.
 - Incorporar tests unitarios y de conversación.

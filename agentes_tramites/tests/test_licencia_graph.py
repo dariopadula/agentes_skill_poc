@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+from skills.licencia_conducir.category_inference import CategoryInference
 from skills.licencia_conducir.handler import handle
 from skills.licencia_conducir.matcher import (
     extract_fields,
@@ -89,6 +90,102 @@ class LicenseMatcherTests(unittest.TestCase):
 
 
 class LicenseGraphTests(unittest.TestCase):
+    def test_explicit_category_does_not_use_llm_inference(self) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "pending_field": "categoria",
+        }
+
+        with patch("skills.licencia_conducir.graph.infer_category") as inference:
+            result = handle("G2", fields)
+
+        inference.assert_not_called()
+        self.assertEqual(result["status"], "need_input")
+        self.assertEqual(result["state_updates"]["categoria"], "G2")
+        self.assertEqual(result["state_updates"]["grupo_categoria"], "amateur")
+        self.assertEqual(result["state_updates"]["pending_field"], "edad")
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_category",
+        return_value=CategoryInference(
+            status="detected",
+            categoria_inferida="G3",
+            grupo_categoria_inferido="profesional",
+            confidence="alta",
+            reason="el usuario menciono una moto de 900 cc",
+        ),
+    )
+    def test_natural_category_description_requires_confirmation(self, inference) -> None:
+        fields: dict[str, object] = {"tramite": "renovacion"}
+
+        first = handle("quiero renovar la licencia", fields)
+        fields.update(first["state_updates"])
+
+        second = handle("moto de 900 cc", fields)
+        fields.update(second["state_updates"])
+
+        inference.assert_called_once_with("moto de 900 cc")
+        self.assertEqual(second["status"], "need_input")
+        self.assertIn("categoria G3", second["question"])
+        self.assertEqual(fields["phase"], "category_inference_confirmation")
+        self.assertEqual(fields["categoria_inferida"], "G3")
+        self.assertNotIn("categoria", fields)
+
+        third = handle("si", fields)
+
+        self.assertEqual(third["status"], "need_input")
+        self.assertEqual(third["state_updates"]["categoria"], "G3")
+        self.assertEqual(third["state_updates"]["grupo_categoria"], "profesional")
+        self.assertEqual(third["state_updates"]["pending_field"], "edad")
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_category",
+        return_value=CategoryInference(
+            status="detected",
+            categoria_inferida="E",
+            grupo_categoria_inferido="profesional",
+            confidence="alta",
+            reason="el usuario menciono taxi",
+        ),
+    )
+    def test_rejected_category_inference_asks_again(self, _inference) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "pending_field": "categoria",
+        }
+
+        first = handle("taxi", fields)
+        fields.update(first["state_updates"])
+        second = handle("no", fields)
+
+        self.assertEqual(second["status"], "need_input")
+        self.assertIn("describime con mas detalle", second["question"])
+        self.assertEqual(second["state_updates"]["phase"], "collect")
+        self.assertEqual(second["state_updates"]["pending_field"], "categoria")
+        self.assertEqual(second["state_updates"]["categoria_inferida"], "")
+
+    @patch(
+        "skills.licencia_conducir.graph.infer_category",
+        return_value=CategoryInference(
+            status="need_input",
+            confidence="media",
+            question="¿La moto es de hasta 50 cc, hasta 200 cc o de mayor cilindrada?",
+            reason="La palabra moto requiere cilindrada.",
+        ),
+    )
+    def test_ambiguous_category_description_asks_llm_question(self, _inference) -> None:
+        fields: dict[str, object] = {
+            "tramite": "renovacion",
+            "pending_field": "categoria",
+        }
+
+        result = handle("moto", fields)
+
+        self.assertEqual(result["status"], "need_input")
+        self.assertIn("moto", result["question"])
+        self.assertEqual(result["state_updates"]["pending_field"], "categoria")
+        self.assertNotIn("categoria", result["state_updates"])
+
     @patch(
         "skills.licencia_conducir.graph.generate_initial_summary",
         return_value="Resumen inicial del trámite.",
